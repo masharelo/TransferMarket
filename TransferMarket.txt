@@ -1,0 +1,12 @@
+TRANSFER MARKET ⚽💼
+
+Transfer Market is a modern app designed to track, manage, and analyze player transfers in real-time. 
+Whether you're a football fan, club manager, or data analyst, 
+Transfer Market gives you the insights and tools to stay ahead of the game.
+
+FEATURES
+- Real-time transfer updates
+- Player profiles with stats and market value
+- Club rosters and transfer history
+- Smart filters and search
+- Responsive UI for mobile and desktop
