@@ -1,19 +1,23 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
-function HomePage() {
-  return <h1>🏠 Welcome to TransferMarket</h1>;
-}
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Home from './pages/Home';
 
 function App() {
+  const isLoggedIn = !!localStorage.getItem('token');
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        {/* Add other routes here later (Login, Dashboard, etc) */}
+        <Route path="/" element={<Navigate to={isLoggedIn ? '/home' : '/login'} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
       </Routes>
     </Router>
   );
 }
 
 export default App;
+
