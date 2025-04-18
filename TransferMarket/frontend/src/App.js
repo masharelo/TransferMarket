@@ -1,23 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
+import { AuthContext } from './context/AuthContext';
 
 function App() {
-  const isLoggedIn = !!localStorage.getItem('token');
+  const { isLoggedIn } = useContext(AuthContext);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to={isLoggedIn ? '/home' : '/login'} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<Navigate to={isLoggedIn ? '/home' : '/login'} />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/login" />} />
+    </Routes>
   );
 }
 
 export default App;
-

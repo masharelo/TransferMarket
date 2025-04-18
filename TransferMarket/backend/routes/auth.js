@@ -38,13 +38,13 @@ router.post('/register', async (req, res) => {
 
 // Login
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
     const [users] = await sequelize.query(
-      `SELECT * FROM users WHERE email = :email`,
+      `SELECT * FROM users WHERE username = :username`,
       {
-        replacements: { email },
+        replacements: { username },
       }
     );
 
