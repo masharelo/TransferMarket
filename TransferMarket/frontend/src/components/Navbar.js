@@ -1,22 +1,15 @@
-import React, { useState , useContext, useEffect} from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
 
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const { logout } = useContext(AuthContext);
-
-    useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-          setUser(JSON.parse(storedUser));
-        }
-      }, []);
+    const { user } = useContext(AuthContext);
 
     return (
-        <div>
+        <div style={{ backgroundColor: 'lightgray' }}>
           <h1>TransferMarket</h1>
           <nav style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/home')}}>🏠 Home</span>

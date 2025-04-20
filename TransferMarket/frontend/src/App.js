@@ -10,8 +10,8 @@ import Players from './pages/Players';
 import Teams from './pages/Teams';
 import MyProfile from './pages/MyProfile';
 import Layout from './components/Layout'; 
-import PrivateRoute from './components/PrivateRoute';
-import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './routes/PrivateRoute';
+import PublicRoute from './routes/PublicRoute';
 
 function App() {
   const { isLoggedIn } = useContext(AuthContext);
