@@ -1,12 +1,12 @@
 import React from "react";
 
-const Favourites = () => {
+const FavouriteTeams = () => {
     return (
         <div>
-            <h1>Favourites</h1>
+            <h1>Favourite Teams</h1>
             <p>This is the Favourites page.</p>
         </div>
     );
 }
 
-export default Favourites;
+export default FavouriteTeams;

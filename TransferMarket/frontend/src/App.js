@@ -5,7 +5,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Home from './pages/Home';
 import Transfers from './pages/Transfers';
-import Favourites from './pages/Favourites';
+import FavouritePlayers from './pages/FavouritePlayers';
+import FavouriteTeams from './pages/FavouriteTeams';
 import Players from './pages/Players';
 import Teams from './pages/Teams';
 import MyProfile from './pages/MyProfile';
@@ -23,7 +24,8 @@ function App() {
       <Route path="/register" element={<PublicRoute> <Register /> </PublicRoute>} />
       <Route path="/home" element={<PrivateRoute> <Layout> <Home /> </Layout> </PrivateRoute>} />
       <Route path="/transfers" element={<PrivateRoute> <Layout> <Transfers /> </Layout> </PrivateRoute>} />
-      <Route path="/favourites" element={<PrivateRoute> <Layout> <Favourites /> </Layout> </PrivateRoute>} />
+      <Route path="/favourite_players" element={<PrivateRoute> <Layout> <FavouritePlayers /> </Layout> </PrivateRoute>} />
+      <Route path="/favourite_teams" element={<PrivateRoute> <Layout> <FavouriteTeams /> </Layout> </PrivateRoute>} />
       <Route path="/players" element={<PrivateRoute> <Layout> <Players /> </Layout> </PrivateRoute>} />
       <Route path="/teams" element={<PrivateRoute> <Layout> <Teams /> </Layout> </PrivateRoute>} />
       <Route path="/myprofile" element={<PrivateRoute> <Layout> <MyProfile /> </Layout> </PrivateRoute>} />

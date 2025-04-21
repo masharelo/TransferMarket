@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middlewares/authMiddleware');
 const { sequelize } = require('../config/db');
 require('dotenv').config();
 
@@ -66,5 +67,27 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Login failed' });
   }
 });
+
+// Favourite Players Show
+router.get('/favourite_players', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+    const [results] = await sequelize.query(`
+      SELECT p.*
+      FROM favourite_players f
+      JOIN players p ON f.player_id = p.player_id
+      WHERE f.user_id = :userId
+    `, {
+      replacements: { userId },
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch favourites' });
+  }
+});
+
 
 module.exports = router;

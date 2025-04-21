@@ -14,7 +14,8 @@ const Navbar = () => {
           <nav style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/home')}}>🏠 Home</span>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/transfers')}}>📈 Transfers</span>
-            <span style={{cursor: 'pointer'}} onClick={() => {navigate('/favourites')}}>⭐ Favourites</span>
+            <span style={{cursor: 'pointer'}} onClick={() => {navigate('/favourite_players')}}>⭐ Favourite Players</span>
+            <span style={{cursor: 'pointer'}} onClick={() => {navigate('/favourite_teams')}}>⭐ Favourite Teams</span>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/players')}}>🐐 Players</span>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/teams')}}>⚽ Teams</span>
             <span style={{cursor: 'pointer'}} onClick={() => {navigate('/myprofile')}}>🗝️ My Profile</span>
