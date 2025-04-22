@@ -89,5 +89,99 @@ router.get('/favourite_players', authMiddleware, async (req, res) => {
   }
 });
 
+// Add Favourite Player
+router.post('/favourite_players/:playerId', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+  const { playerId } = req.params;
+
+  try {
+    await sequelize.query(
+      `INSERT INTO favourite_players (user_id, player_id) VALUES (:userId, :playerId)
+       ON CONFLICT DO NOTHING`,
+      { replacements: { userId, playerId } }
+    );
+
+    res.json({ message: 'Player added to favourites' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add favourite' });
+  }
+});
+
+// Remove Favourite Player
+router.delete('/favourite_players/:playerId', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+  const { playerId } = req.params;
+
+  try {
+    await sequelize.query(
+      `DELETE FROM favourite_players WHERE user_id = :userId AND player_id = :playerId`,
+      { replacements: { userId, playerId } }
+    );
+
+    res.json({ message: 'Player removed from favourites' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to remove favourite' });
+  }
+});
+
+// Favurite Teams Show
+router.get('/favourite_teams', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+    const [results] = await sequelize.query(`
+      SELECT t.*
+      FROM favourite_teams f
+      JOIN teams t ON f.team_id = t.team_id
+      WHERE f.user_id = :userId
+    `, {
+      replacements: { userId },
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch favourites' });
+  }
+});
+
+// Add Favourite Team
+router.post('/favourite_teams/:teamId', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+  const { teamId } = req.params;
+
+  try {
+    await sequelize.query(
+      `INSERT INTO favourite_teams (user_id, team_id) VALUES (:userId, :teamId)
+       ON CONFLICT DO NOTHING`,
+      { replacements: { userId, teamId } }
+    );
+
+    res.json({ message: 'Team added to favourites' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add favourite' });
+  }
+});
+
+// Remove Favourite Team
+router.delete('/favourite_teams/:teamId', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+  const { teamId } = req.params;
+
+  try {
+    await sequelize.query(
+      `DELETE FROM favourite_teams WHERE user_id = :userId AND team_id = :teamId`,
+      { replacements: { userId, teamId } }
+    );
+
+    res.json({ message: 'Team removed from favourites' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to remove favourite' });
+  }
+});
 
 module.exports = router;

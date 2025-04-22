@@ -4,7 +4,6 @@ require('dotenv').config();
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
 
 const authMiddleware = (req, res, next) => {
-  console.log('🔐 Incoming request headers:', req.headers);
 
   const authHeader = req.headers['authorization'];
 
