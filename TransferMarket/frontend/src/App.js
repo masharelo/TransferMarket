@@ -10,6 +10,7 @@ import FavouriteTeams from './pages/FavouriteTeams';
 import Players from './pages/Players';
 import Teams from './pages/Teams';
 import MyProfile from './pages/MyProfile';
+import PostDetail from './pages/PostDetail';
 import Layout from './components/Layout'; 
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
@@ -29,6 +30,7 @@ function App() {
       <Route path="/players" element={<PrivateRoute> <Layout> <Players /> </Layout> </PrivateRoute>} />
       <Route path="/teams" element={<PrivateRoute> <Layout> <Teams /> </Layout> </PrivateRoute>} />
       <Route path="/myprofile" element={<PrivateRoute> <Layout> <MyProfile /> </Layout> </PrivateRoute>} />
+      <Route path="/post/:postId" element={<PrivateRoute> <Layout> <PostDetail /> </Layout> </PrivateRoute>} />
     </Routes>
   );
 }

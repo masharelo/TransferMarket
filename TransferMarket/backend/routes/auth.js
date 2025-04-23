@@ -68,7 +68,7 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Favourite Players Show
+// Show Favourite Players
 router.get('/favourite_players', authMiddleware, async (req, res) => {
   const userId = req.user.user_id;
 
@@ -126,7 +126,7 @@ router.delete('/favourite_players/:playerId', authMiddleware, async (req, res) =
   }
 });
 
-// Favurite Teams Show
+// Show Favourite Teams
 router.get('/favourite_teams', authMiddleware, async (req, res) => {
   const userId = req.user.user_id;
 
@@ -181,6 +181,91 @@ router.delete('/favourite_teams/:teamId', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to remove favourite' });
+  }
+});
+
+// Show Posts
+router.get('/posts', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+  const { types = '', fav = false } = req.query;
+
+  try {
+    // 1. Parse post types from query (like 'hot news,results')
+    const typeArray = types.split(',').map(t => t.trim().toLowerCase());
+
+    // 2. Fetch user favs (only if fav=true)
+    let favTags = [];
+    if (fav === 'true') {
+      const [players] = await sequelize.query(`
+        SELECT LOWER(p.name) AS name
+        FROM favourite_players f
+        JOIN players p ON f.player_id = p.player_id
+        WHERE f.user_id = :userId
+      `, { replacements: { userId } });
+
+      const [teams] = await sequelize.query(`
+        SELECT LOWER(t.name) AS name
+        FROM favourite_teams f
+        JOIN teams t ON f.team_id = t.team_id
+        WHERE f.user_id = :userId
+      `, { replacements: { userId } });
+
+      favTags = [...players.map(p => p.name), ...teams.map(t => t.name)];
+    }
+
+    // 3. Fetch posts from DB
+    let baseQuery = `SELECT * FROM posts`;
+    const whereClauses = [];
+    const replacements = {};
+
+    if (typeArray.length > 0 && typeArray[0] !== '') {
+      whereClauses.push(`LOWER(type) IN (:types)`);
+      replacements.types = typeArray;
+    }
+
+    if (whereClauses.length > 0) {
+      baseQuery += ` WHERE ` + whereClauses.join(' AND ');
+    }
+
+    const [posts] = await sequelize.query(baseQuery, { replacements });
+
+    // 4. If fav=true, filter posts by tags (case-insensitive includes)
+    const filteredPosts = fav === 'true'
+      ? posts.filter(post => {
+          const tagList = post.tags.toLowerCase().split(',').map(tag => tag.trim());
+          return tagList.some(tag => favTags.includes(tag));
+        })
+      : posts;
+
+    res.json(filteredPosts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
+
+// Get a single post by ID
+router.get('/posts/:postId', authMiddleware, async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    const [posts] = await sequelize.query(
+      `SELECT * FROM posts WHERE post_id = :postId`,
+      {
+        replacements: { postId },
+      }
+    );
+
+    const post = posts[0];
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.json(post);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch post' });
   }
 });
 
