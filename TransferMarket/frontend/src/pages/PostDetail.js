@@ -16,18 +16,14 @@ const PostDetail = () => {
         });
         setPost(res.data);
 
-        // Fetch all posts
         const related = await axios.get(`http://localhost:5000/api/auth/posts`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        // Filter out the current post and get up to 2 others
         const others = related.data.filter(p => p.post_id !== Number(postId)).slice(0, 2);
-
-        // Insert home icon between posts
         const relatedList = [];
         if (others.length > 0) relatedList.push(others[0]);
-        relatedList.push({ isHomeIcon: true });
+        if (others.length === 2) relatedList.push({ isHomeIcon: true });
         if (others.length > 1) relatedList.push(others[1]);
 
         setRelatedPosts(relatedList);
@@ -43,65 +39,103 @@ const PostDetail = () => {
 
   return (
     <div style={{ padding: '1rem' }}>
-      <h2>{post.title}</h2>
-      <img
-        src={`http://localhost:5000/uploads/posts/${post.picture}`}
-        alt="post"
-        style={{ width: '100%', maxHeight: '400px', objectFit: 'cover', marginBottom: '1rem' }}
-      />
-      <p>{post.paragraph}</p>
-      <p>
-        <small>
-          Uploaded: {new Date(post.uploaded).toLocaleString()} | Type: {post.type}
-        </small>
-      </p>
-      <p><strong>Tags:</strong> {post.tags}</p>
+      {/* Main Post Layout */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        alignItems: 'flex-start',
+        gap: '2rem',
+        justifyContent: 'center',
+        marginBottom: '2rem'
+      }}>
+        {/* Image */}
+        <img
+          src={`http://localhost:5000/uploads/posts/${post.picture}`}
+          alt="post"
+          style={{
+            width: '100%',
+            maxWidth: '400px',
+            height: 'auto',
+            objectFit: 'contain',
+            borderRadius: '8px',
+            backgroundColor: '#f0f0f0',
+            flexShrink: 0,
+          }}
+        />
+
+        {/* Text */}
+        <div style={{ maxWidth: '600px', flex: 1 }}>
+          <h2 style={{ marginTop: 0 }}>{post.title}</h2>
+          <p style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>{post.paragraph}</p>
+          <p style={{ marginTop: '1rem', color: '#666' }}>
+            <small>
+              Uploaded: {new Date(post.uploaded).toLocaleString()} | Type: {post.type}
+            </small>
+          </p>
+          <p><strong>Tags:</strong> {post.tags}</p>
+        </div>
+      </div>
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <div style={{
-          marginTop: '3rem',
-          display: 'grid',
-          gridTemplateColumns: relatedPosts.length === 3 ? '1fr 60px 1fr' : '1fr 60px',
-          alignItems: 'center',
-          gap: '1rem'
-        }}>
-          {relatedPosts.map((p, index) =>
-            p.isHomeIcon ? (
-              <Link
-                to="/"
-                key={`home-icon-${index}`}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '2rem',
-                  textDecoration: 'none',
-                }}
-              >
-                🏠
-              </Link>
-            ) : (
-              <Link
-                key={p.post_id}
-                to={`/post/${p.post_id}`}
-                style={{
-                  border: '1px solid #ccc',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                }}
-              >
-                <img
-                  src={`http://localhost:5000/uploads/posts/${p.picture}`}
-                  alt="related"
-                  style={{ width: '100%', height: '150px', objectFit: 'cover' }}
-                />
-                <p style={{ padding: '0.5rem' }}>{p.title}</p>
-              </Link>
-            )
-          )}
+        <div style={{ marginTop: '3rem' }}>
+          <h3 style={{ marginBottom: '1rem' }}>Related Posts</h3>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            gap: '40px',
+            flexWrap: 'wrap'
+          }}>
+            {relatedPosts.map((p, index) =>
+              p.isHomeIcon ? (
+                <Link
+                  to="/"
+                  key={`home-icon-${index}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '2.5rem',
+                    width: '60px',
+                    height: '100%',
+                    textDecoration: 'none',
+                  }}
+                >
+                  🏠
+                </Link>
+              ) : (
+                <Link
+                  key={p.post_id}
+                  to={`/post/${p.post_id}`}
+                  style={{
+                    width: '280px',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    backgroundColor: '#fafafa',
+                    transition: '0.2s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <img
+                    src={`http://localhost:5000/uploads/posts/${p.picture}`}
+                    alt="related"
+                    style={{
+                      width: '100%',
+                      height: '200px',
+                      objectFit: 'contain',
+                      backgroundColor: '#f0f0f0',
+                    }}
+                  />
+                  <p style={{ padding: '0.5rem' }}>{p.title}</p>
+                </Link>
+              )
+            )}
+          </div>
         </div>
       )}
     </div>

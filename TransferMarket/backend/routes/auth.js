@@ -190,14 +190,12 @@ router.get('/posts', authMiddleware, async (req, res) => {
   const { types = '', fav = false } = req.query;
 
   try {
-    // 1. Parse post types from query (like 'hot news,results')
     const typeArray = types.split(',').map(t => t.trim().toLowerCase());
 
-    // 2. Fetch user favs (only if fav=true)
     let favTags = [];
     if (fav === 'true') {
       const [players] = await sequelize.query(`
-        SELECT LOWER(p.name) AS name
+        SELECT LOWER(CONCAT(p.name, ' ', p.surname)) AS name
         FROM favourite_players f
         JOIN players p ON f.player_id = p.player_id
         WHERE f.user_id = :userId
@@ -213,7 +211,6 @@ router.get('/posts', authMiddleware, async (req, res) => {
       favTags = [...players.map(p => p.name), ...teams.map(t => t.name)];
     }
 
-    // 3. Fetch posts from DB
     let baseQuery = `SELECT * FROM posts`;
     const whereClauses = [];
     const replacements = {};
@@ -229,7 +226,6 @@ router.get('/posts', authMiddleware, async (req, res) => {
 
     const [posts] = await sequelize.query(baseQuery, { replacements });
 
-    // 4. If fav=true, filter posts by tags (case-insensitive includes)
     const filteredPosts = fav === 'true'
       ? posts.filter(post => {
           const tagList = post.tags.toLowerCase().split(',').map(tag => tag.trim());
@@ -243,6 +239,7 @@ router.get('/posts', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch posts' });
   }
 });
+
 
 // Get a single post by ID
 router.get('/posts/:postId', authMiddleware, async (req, res) => {
