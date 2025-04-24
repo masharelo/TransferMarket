@@ -240,8 +240,7 @@ router.get('/posts', authMiddleware, async (req, res) => {
   }
 });
 
-
-// Get a single post by ID
+// Show a single post by ID
 router.get('/posts/:postId', authMiddleware, async (req, res) => {
   const { postId } = req.params;
 
@@ -265,5 +264,66 @@ router.get('/posts/:postId', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch post' });
   }
 });
+
+// Show Teams
+router.get('/teams', authMiddleware, async (req, res) => {
+  const { offset = 0, limit = 20 } = req.query;
+  const userId = req.user.user_id;
+
+  try {
+    const [teams] = await sequelize.query(`
+      SELECT t.*, 
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      FROM teams t
+      LEFT JOIN favourite_teams f ON f.team_id = t.team_id AND f.user_id = :userId
+      ORDER BY t.team_id
+      OFFSET :offset LIMIT :limit
+    `, {
+      replacements: {
+        offset: parseInt(offset),
+        limit: parseInt(limit),
+        userId,
+      }
+    });
+
+    res.json(teams);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch teams' });
+  }
+});
+
+// Show a single team by ID
+router.get('/teams/:teamId', authMiddleware, async (req, res) => {
+  const { teamId } = req.params;
+  const userId = req.user.user_id;
+
+  try {
+    const [teams] = await sequelize.query(`
+      SELECT t.*, 
+      CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      FROM teams t
+      LEFT JOIN favourite_teams f ON f.team_id = t.team_id AND f.user_id = :userId
+      WHERE t.team_id = :teamId
+    `, {
+      replacements: {
+        teamId,
+        userId,
+      },
+    });
+
+    const team = teams[0];
+
+    if (!team) {
+      return res.status(404).json({ error: 'Team not found' });
+    }
+
+    res.json(team);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch team' });
+  }
+});
+
 
 module.exports = router;
