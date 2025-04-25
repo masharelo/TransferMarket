@@ -325,5 +325,61 @@ router.get('/teams/:teamId', authMiddleware, async (req, res) => {
   }
 });
 
+// Show Players
+router.get('/players', authMiddleware, async (req, res) => {
+  const { offset = 0, limit = 20 } = req.query;
+  const userId = req.user.user_id;
+
+  try {
+    const [players] = await sequelize.query(`
+      SELECT p.*, 
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      FROM players p
+      LEFT JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+      ORDER BY p.player_id
+      OFFSET :offset LIMIT :limit
+    `, {
+      replacements: {
+        offset: parseInt(offset),
+        limit: parseInt(limit),
+        userId,
+      }
+    });
+
+    res.json(players);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch players' });
+  }
+});
+
+// Show a single player by ID
+router.get('/players/:playerId', authMiddleware, async (req, res) => {
+  const { playerId } = req.params;
+  const userId = req.user.user_id;
+
+  try {
+    const [players] = await sequelize.query(`
+      SELECT p.*,
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      FROM players p
+      LEFT JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+      WHERE p.player_id = :playerId
+    `, {
+      replacements: { playerId, userId }
+    });
+
+    const player = players[0];
+
+    if (!player) {
+      return res.status(404).json({ error: 'Player not found' });
+    }
+
+    res.json(player);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch player' });
+  }
+});
 
 module.exports = router;

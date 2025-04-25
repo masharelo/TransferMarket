@@ -6,7 +6,7 @@ const Teams = () => {
   const [teams, setTeams] = useState([]);
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-  const limit = 20;
+  const limit = 10;
 
   useEffect(() => {
     const fetchInitialTeams = async () => {

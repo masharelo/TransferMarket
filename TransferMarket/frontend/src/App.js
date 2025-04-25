@@ -12,6 +12,7 @@ import Teams from './pages/Teams';
 import MyProfile from './pages/MyProfile';
 import PostDetail from './pages/PostDetail';
 import TeamDetail from './pages/TeamDetail';
+import PlayerDetail from './pages/PlayerDetail';
 import Layout from './components/Layout'; 
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
@@ -33,6 +34,7 @@ function App() {
       <Route path="/myprofile" element={<PrivateRoute> <Layout> <MyProfile /> </Layout> </PrivateRoute>} />
       <Route path="/post/:postId" element={<PrivateRoute> <Layout> <PostDetail /> </Layout> </PrivateRoute>} />
       <Route path="/teams/:teamId" element={<PrivateRoute> <Layout> <TeamDetail /> </Layout> </PrivateRoute>} />
+      <Route path="/players/:playerId" element={<PrivateRoute> <Layout> <PlayerDetail /> </Layout> </PrivateRoute>} />
     </Routes>
   );
 }

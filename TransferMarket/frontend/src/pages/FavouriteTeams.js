@@ -1,22 +1,25 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import TeamCard from "../components/TeamCard";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import TeamCard from '../components/TeamCard';
 
 const FavouriteTeams = () => {
   const [teams, setTeams] = useState([]);
+  const [temporarilyUnfavourited, setTemporarilyUnfavourited] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showEmptyMessage, setShowEmptyMessage] = useState(false);
 
   useEffect(() => {
     const fetchFavourites = async () => {
-      const token = localStorage.getItem("token");
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/favourite_teams", {
-          headers: { Authorization: `Bearer ${token}` },
+        const token = localStorage.getItem('token');
+        const res = await axios.get('http://localhost:5000/api/auth/favourite_teams', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
         setTeams(res.data);
       } catch (err) {
-        console.error("Failed to fetch favourites:", err);
+        console.error('Failed to fetch favourite teams:', err);
       } finally {
         setLoading(false);
       }
@@ -26,42 +29,67 @@ const FavouriteTeams = () => {
   }, []);
 
   useEffect(() => {
+    let timeout;
     if (!loading && teams.length === 0) {
-      const timeout = setTimeout(() => setShowEmptyMessage(true), 500);
-      return () => clearTimeout(timeout);
+      timeout = setTimeout(() => setShowEmptyMessage(true), 500);
     } else {
       setShowEmptyMessage(false);
     }
+
+    return () => clearTimeout(timeout);
   }, [loading, teams]);
 
   const toggleFavourite = async (teamId) => {
-    const token = localStorage.getItem("token");
-    try {
-      await axios.delete(`http://localhost:5000/api/auth/favourite_teams/${teamId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTeams(prev => prev.filter(team => team.team_id !== teamId));
-    } catch (err) {
-      console.error("Failed to unfavourite team:", err);
+    const token = localStorage.getItem('token');
+
+    if (temporarilyUnfavourited.includes(teamId)) {
+      try {
+        await axios.post(
+          `http://localhost:5000/api/auth/favourite_teams/${teamId}`,
+          { team_id: teamId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setTemporarilyUnfavourited(prev => prev.filter(id => id !== teamId));
+      } catch (err) {
+        console.error('Failed to re-favourite team:', err);
+      }
+    } else {
+      try {
+        await axios.delete(`http://localhost:5000/api/auth/favourite_teams/${teamId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTemporarilyUnfavourited(prev => [...prev, teamId]);
+      } catch (err) {
+        console.error('Failed to unfavourite team:', err);
+      }
     }
   };
 
   return (
-    <div>
+    <div className="favourites-page">
       <h2>Favourite Teams</h2>
       {loading ? (
         <p>Loading teams...</p>
-      ) : showEmptyMessage ? (
+      ) : teams.length === 0 && showEmptyMessage ? (
         <p>You haven't added any favourite teams yet.</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-          {teams.map(team => (
-            <TeamCard
-              key={team.team_id}
-              team={{ ...team, is_favourite: true }}
-              onToggleFavourite={toggleFavourite}
-            />
-          ))}
+        <div className="teams-grid">
+          {teams.map(team => {
+            const isUnfavourited = temporarilyUnfavourited.includes(team.team_id);
+            return (
+              <TeamCard
+                key={team.team_id}
+                team={{ ...team, is_favourite: !isUnfavourited }}
+                onToggleFavourite={toggleFavourite}
+              />
+            );
+          })}
         </div>
       )}
     </div>

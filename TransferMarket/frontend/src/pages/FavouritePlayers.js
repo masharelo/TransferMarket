@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import PlayerCard from '../components/PlayerCard';
 
 const FavouritePlayers = () => {
   const [players, setPlayers] = useState([]);
@@ -52,7 +53,6 @@ const FavouritePlayers = () => {
             },
           }
         );
-
         setTemporarilyUnfavourited((prev) => prev.filter((id) => id !== playerId));
       } catch (err) {
         console.error('Failed to re-favourite player:', err);
@@ -64,7 +64,6 @@ const FavouritePlayers = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
         setTemporarilyUnfavourited((prev) => [...prev, playerId]);
       } catch (err) {
         console.error('Failed to unfavourite player:', err);
@@ -73,29 +72,25 @@ const FavouritePlayers = () => {
   };
 
   return (
-    <div>
+    <div className="favourites-page">
       <h2>Favourite Players</h2>
       {loading ? (
         <p>Loading players...</p>
       ) : players.length === 0 && showEmptyMessage ? (
         <p>You haven't added any favourite players yet.</p>
       ) : (
-        <ul>
+        <div className="players-grid">
           {players.map((player) => {
             const isUnfavourited = temporarilyUnfavourited.includes(player.player_id);
             return (
-              <li key={player.player_id}>
-                {player.name} - {player.surname}{' '}
-                <span
-                  style={{ cursor: 'pointer', color: isUnfavourited ? 'gray' : 'gold' }}
-                  onClick={() => toggleFavourite(player.player_id)}
-                >
-                  {isUnfavourited ? '☆' : '★'}
-                </span>
-              </li>
+              <PlayerCard
+                key={player.player_id}
+                player={{ ...player, is_favourite: !isUnfavourited }}
+                onToggleFavourite={toggleFavourite}
+              />
             );
           })}
-        </ul>
+        </div>
       )}
     </div>
   );
