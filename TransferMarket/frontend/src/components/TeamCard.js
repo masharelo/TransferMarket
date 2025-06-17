@@ -22,15 +22,18 @@ const TeamCard = ({ team, onToggleFavourite }) => {
         {team.is_favourite ? "★" : "☆"}
       </span>
 
-      <img
-        src={`http://localhost:5000/uploads/teams/${team.logo}`}
-        alt={`${team.name} logo`}
-        className="logo"
-      />
+      <div className="logo-name-container">
+        <img
+          src={`http://localhost:5000/uploads/teams/${team.logo}`}
+          alt={`${team.name} logo`}
+          className="logo"
+        />
+        <strong className="team-name">{team.name}</strong>
+      </div>
 
       <div className="info">
-        <strong>{team.name}</strong> - 📍{team.country}
-        {team.city ? `, ${team.city}` : ""} - 🏟️{team.stadium}
+        📍 {team.country}
+        {team.city ? `, ${team.city}` : ""} - 🏟️ {team.stadium}
       </div>
     </div>
   );

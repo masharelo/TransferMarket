@@ -47,9 +47,7 @@ const TeamDetail = () => {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: "40px" }}>
-      {/* Main card and buttons container */}
       <div style={{ display: "flex", alignItems: "center" }}>
-        {/* Team info card */}
         <div style={{
           display: "flex",
           alignItems: "center",
@@ -61,7 +59,7 @@ const TeamDetail = () => {
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
           marginRight: "20px"
         }}>
-          {/* Star and logo */}
+          
           <div style={{
             display: "flex",
             alignItems: "center",
@@ -88,7 +86,6 @@ const TeamDetail = () => {
             />
           </div>
 
-          {/* Info section */}
           <div>
             <h1>{team.name}</h1>
             <p><strong>Country:</strong> {team.country}</p>
@@ -100,7 +97,6 @@ const TeamDetail = () => {
           </div>
         </div>
 
-        {/* Buttons horizontally aligned to the right of the card */}
         <div style={{
           display: "flex",
           flexDirection: "row",

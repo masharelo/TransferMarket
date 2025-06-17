@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import './LoginRegister.css';
 
 const Register = () => {
   const [form, setForm] = useState({
@@ -27,18 +28,20 @@ const Register = () => {
   };
 
   return (
-    <div>
-      <h1>TransferMarket</h1>
-      <form onSubmit={handleSubmit}>
-        <input name="username" placeholder="Username" onChange={handleChange} required />
-        <input name="name" placeholder="First Name" onChange={handleChange} required />
-        <input name="surname" placeholder="Last Name" onChange={handleChange} required />
-        <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
-        <input name="dob" type="date" onChange={handleChange} required />
-        <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
-        <button type="submit">Register</button>
-      </form>
-      <p>Already registered? <Link to="/login">Login</Link></p>
+    <div className="auth-page">
+      <div className="auth-card">
+        <h1>TransferMarket</h1>
+        <form onSubmit={handleSubmit}>
+          <input name="username" placeholder="Username" onChange={handleChange} required />
+          <input name="name" placeholder="First Name" onChange={handleChange} required />
+          <input name="surname" placeholder="Last Name" onChange={handleChange} required />
+          <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
+          <input name="dob" type="date" onChange={handleChange} required />
+          <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
+          <button type="submit">Register</button>
+        </form>
+        <p>Already registered? <Link to="/login">Login</Link></p>
+      </div>
     </div>
   );
 };

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
+import './PostDetail.css';
+import '../components/Posts.css';
 
 const PostDetail = () => {
   const { postId } = useParams();
@@ -38,37 +40,18 @@ const PostDetail = () => {
   if (!post) return <p>Loading post...</p>;
 
   return (
-    <div style={{ padding: '1rem' }}>
-      {/* Main Post Layout */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        alignItems: 'flex-start',
-        gap: '2rem',
-        justifyContent: 'center',
-        marginBottom: '2rem'
-      }}>
-        {/* Image */}
+    <div className="post-detail-container">
+      <div className="post-detail-content">
         <img
           src={`http://localhost:5000/uploads/posts/${post.picture}`}
           alt="post"
-          style={{
-            width: '100%',
-            maxWidth: '400px',
-            height: 'auto',
-            objectFit: 'contain',
-            borderRadius: '8px',
-            backgroundColor: '#f0f0f0',
-            flexShrink: 0,
-          }}
+          className="post-detail-image"
         />
 
-        {/* Text */}
-        <div style={{ maxWidth: '600px', flex: 1 }}>
-          <h2 style={{ marginTop: 0 }}>{post.title}</h2>
-          <p style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>{post.paragraph}</p>
-          <p style={{ marginTop: '1rem', color: '#666' }}>
+        <div className="post-detail-text">
+          <h2>{post.title}</h2>
+          <p className="post-detail-paragraph">{post.paragraph}</p>
+          <p className="post-detail-meta">
             <small>
               Uploaded: {new Date(post.uploaded).toLocaleString()} | Type: {post.type}
             </small>
@@ -77,30 +60,16 @@ const PostDetail = () => {
         </div>
       </div>
 
-      {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <div style={{ marginTop: '3rem' }}>
-          <h3 style={{ marginBottom: '1rem' }}>Related Posts</h3>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            gap: '40px',
-            flexWrap: 'wrap'
-          }}>
+        <div className="related-posts-section">
+          <h2>Related Posts</h2>
+          <div className="related-posts-container">
             {relatedPosts.map((p, index) =>
               p.isHomeIcon ? (
                 <Link
                   to="/"
                   key={`home-icon-${index}`}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '2.5rem',
-                    width: '60px',
-                    height: '100%',
-                    textDecoration: 'none',
-                  }}
+                  className="home-icon"
                 >
                   🏠
                 </Link>
@@ -108,30 +77,15 @@ const PostDetail = () => {
                 <Link
                   key={p.post_id}
                   to={`/post/${p.post_id}`}
-                  style={{
-                    width: '280px',
-                    border: '1px solid #ccc',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    backgroundColor: '#fafafa',
-                    transition: '0.2s',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    overflow: 'hidden',
-                  }}
-                >
+                  className="post-card"
+                > 
+                  <p className="related-title">{p.title}</p>
                   <img
                     src={`http://localhost:5000/uploads/posts/${p.picture}`}
                     alt="related"
-                    style={{
-                      width: '100%',
-                      height: '200px',
-                      objectFit: 'contain',
-                      backgroundColor: '#f0f0f0',
-                    }}
+                    className="post-image"
                   />
-                  <p style={{ padding: '0.5rem' }}>{p.title}</p>
+                  <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
                 </Link>
               )
             )}

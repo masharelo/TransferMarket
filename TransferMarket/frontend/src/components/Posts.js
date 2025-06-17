@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import './Posts.css';
 
 const Posts = () => {
   const token = localStorage.getItem('token');
@@ -18,7 +19,7 @@ const Posts = () => {
       ...prev,
       [e.target.name]: e.target.checked,
     }));
-    setVisibleCount(5); // reset when filter changes
+    setVisibleCount(5);
   };
 
   useEffect(() => {
@@ -49,11 +50,10 @@ const Posts = () => {
   const loadMore = () => setVisibleCount(prev => prev + 5);
 
   return (
-    <div>
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '1rem' }}>
+    <div className="posts-container">
+      <div className="filters">
         {['hotNews', 'results', 'rumours', 'favourites'].map((key) => (
-          <label key={key}>
+          <label key={key} className="filter-label">
             <input
               type="checkbox"
               name={key}
@@ -65,55 +65,32 @@ const Posts = () => {
         ))}
       </div>
 
-      {/* Grid */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '20px'
-        }}>
+      <div className="posts-grid">
         {posts.slice(0, visibleCount).map(post => (
-            <Link 
-            key={post.post_id} 
-            to={`/post/${post.post_id}`} 
-            style={{ 
-                textDecoration: 'none', 
-                color: 'inherit', 
-                border: '1px solid #ccc', 
-                padding: '1rem', 
-                borderRadius: '8px',
-                transition: '0.2s',
-                background: '#fafafa',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%' // ensures full height for equal sizing
-            }}
-            >
-            <h3 style={{ marginBottom: '0.5rem' }}>{post.title}</h3>
-            <img 
-                src={`http://localhost:5000/uploads/posts/${post.picture}`} 
-                alt="post" 
-                style={{ 
-                width: '100%', 
-                height: '200px', 
-                objectFit: 'contain', 
-                borderRadius: '6px',
-                backgroundColor: '#f0f0f0',
-                marginBottom: '0.5rem'
-                }} 
+          <Link
+            key={post.post_id}
+            to={`/post/${post.post_id}`}
+            className="post-card"
+          >
+            <h3 className="post-title">{post.title}</h3>
+            <img
+              src={`http://localhost:5000/uploads/posts/${post.picture}`}
+              alt="post"
+              className="post-image"
             />
-            <p style={{ flexGrow: 1 }}>{post.paragraph.slice(0, 100)}...</p>
-            <small>
-                {new Date(post.uploaded).toLocaleString()} | Type: {post.type}
+            <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
+            <small className="post-meta">
+              {new Date(post.uploaded).toLocaleString()}
             </small>
-            </Link>
+          </Link>
         ))}
-        </div>
+      </div>
 
-
-      {/* Load More Button */}
       {visibleCount < posts.length && (
-        <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-          <button onClick={loadMore}>Load More</button>
+        <div className="load-more-container1">
+          <button className="LoadMoreButton" onClick={loadMore}>
+            Load More
+          </button>
         </div>
       )}
     </div>

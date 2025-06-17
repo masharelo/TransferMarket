@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import TeamCard from "../components/TeamCard";
+import './Teams.css'
 
 const Teams = () => {
   const [teams, setTeams] = useState([]);
@@ -75,7 +76,7 @@ const Teams = () => {
   };
 
   return (
-    <div>
+    <div className="teams-page">
       <h1>Teams</h1>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         {teams.map(team => (
@@ -83,9 +84,11 @@ const Teams = () => {
         ))}
       </div>
       {hasMore && (
-        <button onClick={fetchMoreTeams} style={{ marginTop: "20px" }}>
-          Load More
-        </button>
+        <div className="load-more-container">
+          <button className="LoadMoreButton" onClick={fetchMoreTeams} style={{ marginTop: "20px" }}>
+            Load More
+          </button>
+        </div>
       )}
     </div>
   );

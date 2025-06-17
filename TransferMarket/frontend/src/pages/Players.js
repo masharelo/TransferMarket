@@ -70,7 +70,7 @@ const Players = () => {
 
   return (
     <div className="players-page">
-      <h1>Players</h1>
+      <h2>Players</h2>
       <div className="players-grid">
         {players.map(player => (
           <PlayerCard
@@ -81,8 +81,8 @@ const Players = () => {
         ))}
       </div>
       {hasMore && (
-        <div className="pagination">
-          <button onClick={fetchMorePlayers}>Load More</button>
+        <div className="load-more-container">
+          <button className="LoadMoreButton" onClick={fetchMorePlayers}>Load More</button>
         </div>
       )}
     </div>
