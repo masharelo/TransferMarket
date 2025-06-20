@@ -9,13 +9,14 @@ const countryNameToCode = {
   Spain: 'es',
   Italy: 'it',
   Argentina: 'ar',
-  England: 'gb',
+  England: 'gb-eng',
   Portugal: 'pt',
   Netherlands: 'nl',
   Montenegro: 'me',
   Belgium: 'be',
   "South Korea": 'kr',
   Georgia: 'ge',
+  "United States of America": 'us',
   // Other
 };
 

@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+import './TeamDetail.css';
+
+const countryNameToCode = {
+  Germany: 'de',
+  France: 'fr',
+  Brazil: 'br',
+  Spain: 'es',
+  Italy: 'it',
+  Argentina: 'ar',
+  England: 'gb-eng',
+  Portugal: 'pt',
+  Netherlands: 'nl',
+  Montenegro: 'me',
+  Belgium: 'be',
+  "South Korea": 'kr',
+  Georgia: 'ge',
+  "United States of America": 'us',
+  // Other
+};
 
 const TeamDetail = () => {
   const { teamId } = useParams();
@@ -45,73 +64,55 @@ const TeamDetail = () => {
 
   if (!team) return <p>Loading...</p>;
 
+  const countryCode = countryNameToCode[team.country];
+
   return (
-    <div style={{ display: "flex", justifyContent: "center", padding: "40px" }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          border: "1px solid #ccc",
-          borderRadius: "12px",
-          padding: "20px",
-          width: "auto",
-          minWidth: "500px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-          marginRight: "20px"
-        }}>
-          
-          <div style={{
-            display: "flex",
-            alignItems: "center",
-            marginRight: "40px"
-          }}>
+    <div className="team-detail-wrapper">
+      <div className="team-detail-content-box">
+        <div className="team-detail-card">
+          <div className="team-detail-logo-box">
+            <div className="team-detail-logo-wrapper">
+              <img
+                src={`http://localhost:5000/uploads/teams/${team.logo}`}
+                alt={`${team.name} logo`}
+                className="team-detail-logo"
+              />
+            </div>
             <button
               onClick={toggleFavourite}
-              style={{
-                fontSize: "28px",
-                color: team.is_favourite ? "gold" : "#aaa",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                marginRight: "10px"
-              }}
+              className={`team-detail-fav-btn ${team.is_favourite ? "fav" : ""}`}
               title={team.is_favourite ? "Remove from favourites" : "Add to favourites"}
             >
               {team.is_favourite ? "★" : "☆"}
             </button>
-            <img
-              src={`http://localhost:5000/uploads/teams/${team.logo}`}
-              alt={`${team.name} logo`}
-              style={{ height: "150px" }}
-            />
           </div>
 
-          <div>
-            <h1>{team.name}</h1>
+          <div className="team-detail-info">
+            <h1>
+              {team.name}
+              {countryCode ? (
+                <img
+                  className="team-detail-flag"
+                  src={`https://flagcdn.com/w40/${countryCode}.png`}
+                  alt={team.country}
+                  title={team.country}
+                />
+              ) : (
+                <span className="team-detail-flag-fallback" title="Unknown country">🌍</span>
+              )}
+            </h1>
             <p><strong>Country:</strong> {team.country}</p>
             {team.city && <p><strong>City:</strong> {team.city}</p>}
             <p><strong>Stadium:</strong> {team.stadium}</p>
             <p><strong>Capacity:</strong> {team.stadium_capacity}</p>
             <p><strong>Founded:</strong> {new Date(team.founded).toLocaleDateString()}</p>
-            <p><strong>Squad Value: ???</strong> </p>
+            <p><strong>Squad Value: ???</strong></p>
           </div>
         </div>
 
-        <div style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "10px"
-        }}>
+        <div className="team-detail-nav-buttons">
           {["Squad", "Transfers", "Loans", "Contracts", "Competition"].map(label => (
-            <button key={label} style={{
-              padding: "8px 16px",
-              borderRadius: "6px",
-              border: "1px solid #ccc",
-              cursor: "pointer",
-              background: "#f5f5f5"
-            }}>
-              {label}
-            </button>
+            <button key={label}>{label}</button>
           ))}
         </div>
       </div>

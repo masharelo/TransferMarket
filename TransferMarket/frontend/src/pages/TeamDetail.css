@@ -1,0 +1,163 @@
+.team-detail-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 40px;
+}
+
+.team-detail-content-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 30px;
+}
+
+.team-detail-card {
+  display: flex;
+  align-items: center;
+  background-color: #171033;
+  border-radius: 30px;
+  padding: 28px;
+  width: auto;
+  min-width: 480px;
+  max-width: 100%;
+  color: white;
+  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+}
+
+.team-detail-logo-box {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  margin-right: 30px;
+  position: relative;
+}
+
+.team-detail-logo-wrapper {
+  position: relative;
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.team-detail-logo-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: -20px;
+  right: -20px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 64%, rgba(23, 16, 51, 1) 80%);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.team-detail-logo {
+  height: 150px;
+  max-width: 100%;
+}
+
+.team-detail-fav-btn {
+  font-size: 60px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  margin-bottom: 10px;
+  user-select: none;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.team-detail-fav-btn:hover {
+  transform: scale(1.45);
+}
+
+.team-detail-fav-btn.fav {
+  color: gold;
+}
+
+.team-detail-info h1 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 26px;
+}
+
+.team-detail-info p {
+  margin: 6px 0;
+  color: #ddd;
+}
+
+.team-detail-nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.team-detail-nav-buttons button {
+  font-family: 'Poppins', sans-serif;
+  background-color: #171033;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  width: 140px;
+  height: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.team-detail-nav-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.team-detail-nav-buttons button::before {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -80%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%) rotate(25deg);
+  pointer-events: none;
+}
+
+.team-detail-nav-buttons button:hover::before {
+  animation: diagonal-shine 0.75s forwards;
+}
+
+@keyframes diagonal-shine {
+  0% {
+    transform: translateX(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(100%) rotate(25deg);
+  }
+}
+
+.team-detail-flag {
+  margin-left: 10px;
+  vertical-align: middle;
+  border-radius: 2px;
+  width: 28px;
+  height: 20px;
+  object-fit: cover;
+}
+
+.team-detail-flag-fallback {
+  margin-left: 10px;
+  font-size: 20px;
+  vertical-align: middle;
+}
