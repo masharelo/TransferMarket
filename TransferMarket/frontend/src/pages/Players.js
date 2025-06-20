@@ -70,7 +70,7 @@ const Players = () => {
 
   return (
     <div className="players-page">
-      <h2>Players</h2>
+      <h1>🐐 Players</h1>
       <div className="players-grid">
         {players.map(player => (
           <PlayerCard

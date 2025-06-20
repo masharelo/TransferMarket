@@ -1,10 +1,10 @@
 import React from "react";
+import './Transfers.css'
 
 const Transfers = () => {
     return (
-        <div>
-            <h1>Transfers</h1>
-            <p>This is the Transfers page.</p>
+        <div className="transfers-header">
+            <h1>📈 Transfers</h1>
         </div>
     );
 }

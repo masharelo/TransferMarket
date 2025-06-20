@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PlayerCard from '../components/PlayerCard';
+import './FavouritePlayers.css'
 
 const FavouritePlayers = () => {
   const [players, setPlayers] = useState([]);
@@ -73,7 +74,7 @@ const FavouritePlayers = () => {
 
   return (
     <div className="favourites-page">
-      <h2>Favourite Players</h2>
+      <h1>⭐ Favourite Players</h1>
       {loading ? (
         <p>Loading players...</p>
       ) : players.length === 0 && showEmptyMessage ? (

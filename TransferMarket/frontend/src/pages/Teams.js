@@ -77,7 +77,7 @@ const Teams = () => {
 
   return (
     <div className="teams-page">
-      <h1>Teams</h1>
+      <h1>⚽ Teams</h1>
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
         {teams.map(team => (
           <TeamCard key={team.team_id} team={team} onToggleFavourite={toggleFavourite} />

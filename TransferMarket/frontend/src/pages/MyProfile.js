@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
+import './MyProfile.css'
 
 const MyProfile = () => {
   const { user, /*updateUser*/ } = useContext(AuthContext);
@@ -40,8 +41,8 @@ const MyProfile = () => {
   if (!profileData) return <p>Loading user profile...</p>;
 
   return (
-        <div>
-            <h1>My Profile</h1>
+        <div className="info">
+            <h1>🗝️ My Profile</h1>
             <p>This is the My Profile page.</p>
             <h2>Profile Information</h2>
             <p>Profile Picture: {user.pfp}</p>

@@ -13,6 +13,7 @@ const Posts = () => {
     favourites: false,
   });
   const [visibleCount, setVisibleCount] = useState(5);
+  const [titleFilter, setTitleFilter] = useState('');
 
   const handleCheckboxChange = (e) => {
     setFilters(prev => ({
@@ -20,6 +21,10 @@ const Posts = () => {
       [e.target.name]: e.target.checked,
     }));
     setVisibleCount(5);
+  };
+
+  const handleTitleChange = (e) => {
+    setTitleFilter(e.target.value);
   };
 
   useEffect(() => {
@@ -49,24 +54,38 @@ const Posts = () => {
 
   const loadMore = () => setVisibleCount(prev => prev + 5);
 
+  const filteredPosts = posts.filter(post =>
+    post.title.toLowerCase().includes(titleFilter.toLowerCase())
+  );
+
   return (
     <div className="posts-container">
-      <div className="filters">
-        {['hotNews', 'results', 'rumours', 'favourites'].map((key) => (
-          <label key={key} className="filter-label">
-            <input
-              type="checkbox"
-              name={key}
-              checked={filters[key]}
-              onChange={handleCheckboxChange}
-            />
-            {key.charAt(0).toUpperCase() + key.slice(1)}
-          </label>
-        ))}
+      <div className="filters-wrapper">
+        <div className="filters">
+          {['hotNews', 'results', 'rumours', 'favourites'].map((key) => (
+            <label key={key} className="filter-label">
+              <input
+                type="checkbox"
+                name={key}
+                checked={filters[key]}
+                onChange={handleCheckboxChange}
+              />
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </label>
+          ))}
+        </div>
+
+        <input
+          type="text"
+          placeholder="Filter by title..."
+          value={titleFilter}
+          onChange={handleTitleChange}
+          className="title-filter"
+        />
       </div>
 
       <div className="posts-grid">
-        {posts.slice(0, visibleCount).map(post => (
+        {filteredPosts.slice(0, visibleCount).map(post => (
           <Link
             key={post.post_id}
             to={`/post/${post.post_id}`}
@@ -86,7 +105,7 @@ const Posts = () => {
         ))}
       </div>
 
-      {visibleCount < posts.length && (
+      {visibleCount < filteredPosts.length && (
         <div className="load-more-container1">
           <button className="LoadMoreButton" onClick={loadMore}>
             Load More

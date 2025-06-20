@@ -1,5 +1,10 @@
 .players-page {
-  padding: 20px;
+  margin-left: 30px;
+  margin-bottom: 30px;
+}
+.players-page h1{
+  text-align: center;
+  margin-right: 30px;
 }
 
 .players-grid {
