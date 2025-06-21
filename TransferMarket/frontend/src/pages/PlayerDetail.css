@@ -1,14 +1,99 @@
-.player-detail {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  .player-detail img {
-    width: 200px;
-    height: auto;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-  }
-  
+.custom-player-layout {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2rem 4rem;
+}
+
+.custom-player-card {
+  background-color: #171033;
+  color: white;
+  padding: 2rem;
+  border-radius: 30px;
+  width: 25%;
+  text-align: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  margin-left: 55px;
+}
+
+.custom-player-img-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  margin-left: 0.85rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.custom-player-fav-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+}
+
+.custom-player-fav-btn {
+  font-size: 60px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  user-select: none;
+  transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.custom-player-fav-btn:hover {
+  transform: scale(1.45);
+}
+
+.custom-player-fav-btn.fav {
+  color: gold;
+}
+
+.custom-player-card img {
+  width: 150px;
+  height: auto;
+  border-radius: 10px;
+  margin-left: 1rem;
+}
+
+.custom-player-flag {
+  margin-left: 3px !important; 
+  vertical-align: middle;
+  width: 28px !important;
+  height: 20px !important;
+  object-fit: cover;
+  border-radius: 0 !important;
+  border: 2px solid #454583;
+}
+
+.custom-player-flag-fallback {
+  margin-left: 10px;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.custom-player-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.custom-player-buttons button {
+  padding: 0.6rem 1.2rem;
+  background-color: #4a3aff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.custom-player-buttons button:hover {
+  background-color: #372bbf;
+}

@@ -2,24 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import './TeamDetail.css';
-
-const countryNameToCode = {
-  Germany: 'de',
-  France: 'fr',
-  Brazil: 'br',
-  Spain: 'es',
-  Italy: 'it',
-  Argentina: 'ar',
-  England: 'gb-eng',
-  Portugal: 'pt',
-  Netherlands: 'nl',
-  Montenegro: 'me',
-  Belgium: 'be',
-  "South Korea": 'kr',
-  Georgia: 'ge',
-  "United States of America": 'us',
-  // Other
-};
+import countryNameToCode from "../utils/CountryToCode";
+import formatDate from "../utils/FormatDate";
 
 const TeamDetail = () => {
   const { teamId } = useParams();
@@ -105,12 +89,12 @@ const TeamDetail = () => {
             {team.city && <p><strong>City:</strong> {team.city}</p>}
             <p><strong>Stadium:</strong> {team.stadium}</p>
             <p><strong>Capacity:</strong> {team.stadium_capacity}</p>
-            <p><strong>Founded:</strong> {new Date(team.founded).toLocaleDateString()}</p>
+            <p><strong>Founded:</strong> {formatDate(team.founded)}</p>
             <p><strong>Squad Value: ???</strong></p>
           </div>
         </div>
 
-        <div className="team-detail-nav-buttons">
+        <div className="team-player-detail-nav-buttons">
           {["Squad", "Transfers", "Loans", "Contracts", "Competition"].map(label => (
             <button key={label}>{label}</button>
           ))}

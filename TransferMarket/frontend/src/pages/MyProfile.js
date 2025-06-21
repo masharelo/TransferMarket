@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import './MyProfile.css'
+import formatDate from "../utils/FormatDate";
 
 const MyProfile = () => {
   const { user, /*updateUser*/ } = useContext(AuthContext);
@@ -50,7 +51,7 @@ const MyProfile = () => {
             <p>Name: {user.name}</p>
             <p>Surname: {user.surname}</p>
             <p>Email: {user.email}</p>
-            <p>Date of Birth: {user.date_of_birth}</p>
+            <p>Date of Birth: {formatDate(user.date_of_birth)}</p>
         </div>
   );
 };

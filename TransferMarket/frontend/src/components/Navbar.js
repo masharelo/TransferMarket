@@ -6,7 +6,6 @@ import './Navbar.css';
 const Navbar = () => {
   const navigate = useNavigate();
   const { logout } = useContext(AuthContext);
-  const { user } = useContext(AuthContext);
 
   return (
     <div className="navbar-container">
