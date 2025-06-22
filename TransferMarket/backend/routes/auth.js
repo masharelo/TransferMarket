@@ -382,4 +382,36 @@ router.get('/players/:playerId', authMiddleware, async (req, res) => {
   }
 });
 
+// Show Transfers
+router.get('/transfers', authMiddleware, async (req, res) => {
+  const { type, name, sortByValue } = req.query;
+
+  try {
+    const [transfers] = await sequelize.query(`
+      SELECT c.type, c.player_id, c.team_from, c.team_to, c.start_date, c.end_date, c.price,
+             p.name AS player_name, p.surname AS player_surname, p.picture AS player_picture, 
+             t1.name AS team_from_name, t1.logo AS team_from_logo,
+             t2.name AS team_to_name, t2.logo AS team_to_logo
+      FROM contracts c
+      JOIN players p ON c.player_id = p.player_id
+      JOIN teams t1 ON c.team_from = t1.team_id
+      JOIN teams t2 ON c.team_to = t2.team_id
+      WHERE 1=1
+        ${type ? 'AND c.type = :type' : ''}
+        ${name ? 'AND LOWER(CONCAT(p.name, \' \', p.surname)) LIKE :name' : ''}
+      ORDER BY ${sortByValue === 'true' ? 'c.price DESC' : 'c.start_date DESC'}
+    `, {
+      replacements: {
+        type,
+        name: name ? `%${name.toLowerCase()}%` : undefined
+      }
+    });
+
+    res.json(transfers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch transfers' });
+  }
+});
+
 module.exports = router;

@@ -27,7 +27,6 @@
   align-items: center;
 }
 
-/* Checkbox Styling */
 .filter-label input[type="checkbox"] {
   appearance: none;
   width: 24px;
@@ -78,8 +77,6 @@
 .title-filter:focus {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.7);
 }
-
-/* Removed the shine animation completely */
 
 .posts-grid {
   display: grid;
