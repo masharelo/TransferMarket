@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './PlayerCard.css';
 import countryNameToCode from "../utils/CountryToCode";
+import formatValue from '../utils/FormatValue';
 
 const PlayerCard = ({ player, onToggleFavourite }) => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const PlayerCard = ({ player, onToggleFavourite }) => {
         )}
       </h4>
       <p>{player.club}</p>
-      <p>{player.position}</p>
+      <p>{player.position} | €{formatValue(player.value)}</p>
     </div>
   );
 };

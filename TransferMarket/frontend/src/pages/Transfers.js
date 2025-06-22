@@ -120,7 +120,7 @@ const Transfers = () => {
                   <strong>{t.player_name} {t.player_surname}</strong>
                 </div>
               </td>
-              <td>{t.type}</td>
+              <td className="transfer-column-type">{t.type}</td>
               <td>
                 <div className="logo-name-cell-from">
                   <img src={`http://localhost:5000/uploads/teams/${t.team_from_logo}`} alt={`${t.team_from_name} logo`} className="team-logo" />
@@ -135,7 +135,7 @@ const Transfers = () => {
               </td>
               <td>{formatDate(t.start_date)}</td>
               <td>{formatDate(t.end_date)}</td>
-              <td>€{formatValue(t.price)}</td>
+              <td>{t.type === "contract" ? (<>Extended <br />Contract</> ): t.price === 0 ? "Free Agent" : `€${formatValue(t.price)}`}</td>
             </tr>
           ))}
         </tbody>

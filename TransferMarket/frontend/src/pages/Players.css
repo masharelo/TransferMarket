@@ -1,10 +1,9 @@
 .players-page {
-  margin-left: 30px;
-  margin-bottom: 30px;
+  margin: 30px;
 }
-.players-page h1{
+
+.players-page h1 {
   text-align: center;
-  margin-right: 30px;
 }
 
 .players-grid {
@@ -15,4 +14,69 @@
   gap: 24px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.players-filters-name-club {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.players-filters-wrapper {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.transfers-filter {
+  width: 300px;
+  padding: 8px 12px;
+  font-size: 16px;
+}
+
+.sort-players-button {
+  font-family: 'Poppins', sans-serif;
+  background-color: #171033;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  height: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 16px;
+  flex: 1 1 auto;
+  max-width: 160px;
+}
+
+.sort-players-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.sort-players-button::before {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -80%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%) rotate(25deg);
+  pointer-events: none;
+}
+
+.sort-players-button:hover::before {
+  animation: diagonal-shine 0.75s forwards;
+}
+
+@keyframes diagonal-shine {
+  to {
+    transform: translateX(100%) rotate(25deg);
+  }
 }

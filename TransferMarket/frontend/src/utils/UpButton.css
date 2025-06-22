@@ -1,0 +1,30 @@
+.up-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #171033;
+  color: white;
+  border: 3px solid white;
+  border-radius: 50%;
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  z-index: 999;
+}
+
+.up-button:hover {
+  background-color: #454583;
+}
+
+.up-button.show {
+  opacity: 1;
+  visibility: visible;
+}

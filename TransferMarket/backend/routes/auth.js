@@ -353,6 +353,28 @@ router.get('/players', authMiddleware, async (req, res) => {
   }
 });
 
+// All Players
+router.get('/players/all', authMiddleware, async (req, res) => {
+  const userId = req.user.user_id;
+
+  try {
+    const [players] = await sequelize.query(`
+      SELECT p.*, 
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      FROM players p
+      LEFT JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+      ORDER BY p.player_id
+    `, {
+      replacements: { userId }
+    });
+
+    res.json(players);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch all players' });
+  }
+});
+
 // Show a single player by ID
 router.get('/players/:playerId', authMiddleware, async (req, res) => {
   const { playerId } = req.params;

@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './Navbar.css';
+import UpButton from "../utils/UpButton";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const Navbar = () => {
         <span className="navbar-link" onClick={() => navigate('/teams')}>⚽ Teams</span>
         <span className="navbar-link" onClick={() => navigate('/myprofile')}>🗝️ My Profile</span>
         <span className="navbar-link" onClick={() => { logout(); navigate('/login'); }}>🔒 Logout</span>
+        <UpButton />
       </nav>
     </div>
   );
