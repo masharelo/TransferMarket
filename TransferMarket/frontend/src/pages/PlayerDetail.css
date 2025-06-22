@@ -1,5 +1,6 @@
 .custom-player-layout {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 2rem;
@@ -11,21 +12,22 @@
   color: white;
   padding: 2rem;
   border-radius: 30px;
-  width: 25%;
+  width: 100%;
+  max-width: 350px;
   text-align: center;
   flex-shrink: 0;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  margin-left: 55px;
 }
 
 .custom-player-img-wrapper {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 1.5rem;
-  margin-left: 0.85rem;
-  margin-bottom: 1rem;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  overflow: hidden;
   position: relative;
+  margin-left: -40px;
 }
 
 .custom-player-fav-container {
@@ -33,10 +35,11 @@
   align-items: center;
   justify-content: center;
   width: 50px;
+  margin-right: 25px;
 }
 
 .custom-player-fav-btn {
-  font-size: 60px;
+  font-size: 55px;
   background: none;
   border: none;
   cursor: pointer;
@@ -54,14 +57,15 @@
 }
 
 .custom-player-card img {
-  width: 150px;
+  width: 100%;
+  max-width: 150px;
   height: auto;
   border-radius: 10px;
-  margin-left: 1rem;
+  object-fit: cover;
 }
 
 .custom-player-flag {
-  margin-left: 3px !important; 
+  margin-left: 3px !important;
   vertical-align: middle;
   width: 28px !important;
   height: 20px !important;
@@ -74,26 +78,4 @@
   margin-left: 10px;
   font-size: 16px;
   vertical-align: middle;
-}
-
-.custom-player-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 0.5rem;
-}
-
-.custom-player-buttons button {
-  padding: 0.6rem 1.2rem;
-  background-color: #4a3aff;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.2s;
-}
-
-.custom-player-buttons button:hover {
-  background-color: #372bbf;
 }

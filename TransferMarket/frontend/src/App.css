@@ -54,11 +54,25 @@ body {
   margin-top: 2rem;
 }
 
+.team-player-layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.card-section {
+  flex: 1 1 300px;
+  min-width: 250px;
+}
+
 .team-player-detail-nav-buttons {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
+  gap: 10px;
+  flex: 1 1 300px;
+  min-width: 250px;
+  align-content: flex-start;
 }
 
 .team-player-detail-nav-buttons button {
@@ -68,13 +82,16 @@ body {
   border: none;
   border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-  width: 140px;
   height: 50px;
   font-size: 16px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   position: relative;
   overflow: hidden;
+  white-space: nowrap;
+  padding: 0 16px;
+  flex: 1 1 auto;
+  max-width: 160px;
 }
 
 .team-player-detail-nav-buttons button:hover {
@@ -98,11 +115,13 @@ body {
   animation: diagonal-shine 0.75s forwards;
 }
 
-@keyframes diagonal-shine {
-  0% {
-    transform: translateX(-100%) rotate(25deg);
+@media (max-width: 800px) {
+  .team-player-layout {
+    flex-direction: column;
+    align-items: center;
   }
-  100% {
-    transform: translateX(100%) rotate(25deg);
+
+  .team-player-detail-nav-buttons {
+    justify-content: center;
   }
 }

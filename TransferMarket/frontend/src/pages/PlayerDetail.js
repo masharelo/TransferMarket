@@ -4,6 +4,8 @@ import axios from 'axios';
 import './PlayerDetail.css';
 import countryNameToCode from "../utils/CountryToCode";
 import formatDate from "../utils/FormatDate";
+import getAge from "../utils/GetAge";
+import formatValue from '../utils/FormatValue';
 
 const PlayerDetail = () => {
   const { playerId } = useParams();
@@ -83,8 +85,8 @@ const PlayerDetail = () => {
             <span className="team-detail-flag-fallback" title="Unknown country">🌍</span>
           )}
         </p>
-        <p><strong>Date of Birth:</strong> {formatDate(player.date_of_birth)}</p>
-        <p><strong>Value: ???</strong></p>
+        <p><strong>Date of Birth:</strong> {formatDate(player.date_of_birth)}, {getAge(player.date_of_birth)} years</p>
+        <p><strong>Value:</strong> {player.value ? `€${formatValue(player.value)}` : '???'}</p>
       </div>
 
       <div className="team-player-detail-nav-buttons">

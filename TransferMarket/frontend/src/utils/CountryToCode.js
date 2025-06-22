@@ -16,7 +16,8 @@ const countryNameToCode = {
   Senegal: 'sn',
   Sweden: 'se',
   Ecuador: 'ec',
-  // Add more countries as needed
+  Uruguay: 'uy',
+  // Other
 };
 
 export default countryNameToCode;
