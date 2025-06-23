@@ -1,15 +1,15 @@
-export default function formatValue(value) {
+export default function formatTotalValue(value) {
   if (value == null || isNaN(value)) return '???';
 
   if (value >= 1_000_000_000) {
     const billions = value / 1_000_000_000;
-    return `${billions.toFixed(1)}b`;
+    return `${billions.toFixed(2)} billion`;
   } else if (value >= 1_000_000) {
     const millions = value / 1_000_000;
-    return `${millions.toFixed(1)}m`;
+    return `${millions.toFixed(2)} million`;
   } else if (value >= 1_000) {
     const thousands = value / 1_000;
-    return `${thousands.toFixed(1)}k`;
+    return `${thousands.toFixed(2)} thousand`;
   }
 
   return value.toString();

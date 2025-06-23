@@ -3,7 +3,6 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
-const adminOnly = require('../middlewares/adminOnly');
 const { sequelize } = require('../config/db');
 require('dotenv').config();
 
@@ -443,6 +442,86 @@ router.get('/transfers', authMiddleware, async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch transfers' });
+  }
+});
+
+// Get current squad of a team
+router.get('/teams/:teamId/squad', authMiddleware, async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const [players] = await sequelize.query(`
+      WITH latest_contracts AS (
+        SELECT DISTINCT ON (player_id) *
+        FROM contracts
+        ORDER BY player_id, start_date DESC
+      )
+      SELECT p.*
+      FROM latest_contracts lc
+      JOIN players p ON lc.player_id = p.player_id
+      WHERE lc.team_to = :teamId AND lc.end_date >= CURRENT_DATE
+    `, {
+      replacements: { teamId }
+    });
+
+    res.json(players);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch squad' });
+  }
+});
+
+// Get all contracts of a team by type
+router.get('/teams/:teamId/contracts', authMiddleware, async (req, res) => {
+  const { teamId } = req.params;
+  const { type = 'all' } = req.query;
+
+  try {
+    const baseQuery = `
+      SELECT c.*, 
+             p.name AS player_name, p.surname AS player_surname, p.picture AS player_picture, p.nationality AS player_nationality,
+             t1.name AS team_from_name, t1.logo AS team_from_logo,
+             t2.name AS team_to_name, t2.logo AS team_to_logo
+      FROM contracts c
+      JOIN players p ON c.player_id = p.player_id
+      JOIN teams t1 ON c.team_from = t1.team_id
+      JOIN teams t2 ON c.team_to = t2.team_id
+    `;
+
+    let condition = '';
+    const replacements = { teamId };
+
+    if (type === 'contract') {
+      condition = `
+        WHERE c.type = 'contract' AND c.team_from = :teamId AND c.team_to = :teamId
+      `;
+    } else if (type === 'transfer') {
+      condition = `
+        WHERE c.type = 'transfer' AND (c.team_from = :teamId OR c.team_to = :teamId)
+      `;
+    } else if (type === 'loan') {
+      condition = `
+        WHERE c.type = 'loan' AND (c.team_from = :teamId OR c.team_to = :teamId)
+      `;
+    } else {
+      condition = `
+        WHERE 
+          (c.type = 'contract' AND c.team_from = :teamId AND c.team_to = :teamId)
+          OR (c.type = 'transfer' AND c.team_to = :teamId)
+          OR (c.type = 'loan' AND c.team_to = :teamId)
+      `;
+    }
+
+    const finalQuery = `${baseQuery} ${condition} ORDER BY c.start_date DESC`;
+
+    const [contracts] = await sequelize.query(finalQuery, {
+      replacements
+    });
+
+    res.json(contracts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch contracts' });
   }
 });
 

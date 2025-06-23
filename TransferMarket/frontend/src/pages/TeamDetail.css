@@ -1,56 +1,52 @@
-.team-detail-wrapper {
-  display: flex;
-  justify-content: center;
-  padding: 40px;
-}
-
 .team-detail-content-box {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
   gap: 30px;
+  width: 100%;
+  max-width: 95%;
+  margin-left: 20px;
 }
 
 .team-detail-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   background-color: #171033;
   border-radius: 30px;
   padding: 28px;
-  width: auto;
-  min-width: 480px;
-  max-width: 100%;
+  width: 100%;
+  max-width: 700px;
   color: white;
   font-size: 18px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   box-sizing: border-box;
+  gap: 30px;
+  margin-top: 20px;
 }
 
 .team-detail-logo-box {
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
-  margin-right: 30px;
   position: relative;
 }
 
 .team-detail-logo-wrapper {
-  position: relative;
   background-color: white;
   border-radius: 16px;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1;
+  position: relative;
   overflow: hidden;
 }
 
 .team-detail-logo-wrapper::before {
   content: "";
   position: absolute;
-  top: -20px;
+  top: -10px;
   bottom: -20px;
   left: -20px;
   right: -20px;
@@ -60,8 +56,9 @@
 }
 
 .team-detail-logo {
-  height: 150px;
-  max-width: 100%;
+  height: 120px;
+  width: 120px;
+  object-fit: contain;
 }
 
 .team-detail-fav-btn {
@@ -70,9 +67,10 @@
   border: none;
   cursor: pointer;
   color: #888;
-  margin-bottom: 10px;
+  margin-top: 10px;
   user-select: none;
   transition: transform 0.2s ease, color 0.3s ease;
+  margin-bottom: 5px;
 }
 
 .team-detail-fav-btn:hover {
@@ -83,9 +81,20 @@
   color: gold;
 }
 
+.team-detail-info-and-buttons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.team-detail-info {
+  margin-bottom: 20px;
+  margin-left: 10px;
+}
+
 .team-detail-info h1 {
-  margin-top: 0;
-  margin-bottom: 10px;
+  margin: 0 0 10px;
   font-size: 26px;
 }
 
@@ -107,4 +116,85 @@
   margin-left: 10px;
   font-size: 20px;
   vertical-align: middle;
+}
+
+.nav-buttons-in-team-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-left: 10px;
+}
+
+.nav-buttons-in-team-card button {
+  font-family: 'Poppins', sans-serif;
+  background-color: #1d1d45;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  height: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 16px;
+  flex: 1 1 auto;
+  max-width: 160px;
+}
+
+.nav-buttons-in-team-card button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.nav-buttons-in-team-card button::before {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -80%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%) rotate(25deg);
+  pointer-events: none;
+}
+
+.nav-buttons-in-team-card button:hover::before {
+  animation: diagonal-shine 0.75s forwards;
+}
+
+@media (max-width: 800px) {
+  .team-player-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .team-player-detail-nav-buttons {
+    justify-content: center;
+  }
+}
+
+.nav-buttons-in-team-card .active-tab {
+  background-color: #302865;
+  font-weight: bold;
+}
+
+.tab-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.tab-content {
+  width: 100%;
+  padding: 10px;
+  color: white;
+}
+
+.golden-team {
+  color: gold;
+  font-weight: bold;
 }
