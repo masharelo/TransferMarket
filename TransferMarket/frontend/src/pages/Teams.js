@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import TeamCard from "../components/TeamCard";
-import './Teams.css'
+import './Teams.css';
 
 const Teams = () => {
   const [teams, setTeams] = useState([]);

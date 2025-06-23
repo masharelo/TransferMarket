@@ -6,12 +6,16 @@ import UpButton from "../utils/UpButton";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { logout } = useContext(AuthContext);
+  const { logout, user } = useContext(AuthContext);
 
   return (
     <div className="navbar-container">
       <h1 className="navbar-title">TransferMarket</h1>
       <nav className="navbar-nav">
+        {user?.is_admin === 1 && (
+          <span className="navbar-link" onClick={() => navigate('/admin')}>🛠️ Admin Dashboard</span>
+        )}
+
         <span className="navbar-link" onClick={() => navigate('/home')}>🏠 Home</span>
         <span className="navbar-link" onClick={() => navigate('/transfers')}>📈 Transfers</span>
         <span className="navbar-link" onClick={() => navigate('/favourite_players')}>⭐ Favourite Players</span>

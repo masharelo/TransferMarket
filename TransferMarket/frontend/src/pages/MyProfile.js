@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
-import './MyProfile.css'
+import './MyProfile.css';
 import formatDate from "../utils/FormatDate";
 
 const MyProfile = () => {

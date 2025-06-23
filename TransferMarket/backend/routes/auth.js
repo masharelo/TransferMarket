@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
+const adminOnly = require('../middlewares/adminOnly');
 const { sequelize } = require('../config/db');
 require('dotenv').config();
 
@@ -211,12 +212,16 @@ router.get('/posts', authMiddleware, async (req, res) => {
       favTags = [...players.map(p => p.name), ...teams.map(t => t.name)];
     }
 
-    let baseQuery = `SELECT * FROM posts`;
+    let baseQuery = `
+      SELECT p.*, u.name AS author_name, u.surname AS author_surname
+      FROM posts p
+      JOIN users u ON p.admin_id = u.user_id
+    `;
     const whereClauses = [];
     const replacements = {};
 
     if (typeArray.length > 0 && typeArray[0] !== '') {
-      whereClauses.push(`LOWER(type) IN (:types)`);
+      whereClauses.push(`LOWER(p.type) IN (:types)`);
       replacements.types = typeArray;
     }
 
@@ -246,7 +251,12 @@ router.get('/posts/:postId', authMiddleware, async (req, res) => {
 
   try {
     const [posts] = await sequelize.query(
-      `SELECT * FROM posts WHERE post_id = :postId`,
+      `
+      SELECT p.*, u.name AS author_name, u.surname AS author_surname
+      FROM posts p
+      JOIN users u ON p.admin_id = u.user_id
+      WHERE p.post_id = :postId
+      `,
       {
         replacements: { postId },
       }

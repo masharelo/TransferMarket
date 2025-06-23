@@ -12,9 +12,15 @@ const Login = () => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      navigate('/home');
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user?.is_admin) {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
     }
   }, [isLoggedIn, navigate]);
+
 
   const handleLogin = async (e) => {
     e.preventDefault();

@@ -46,7 +46,7 @@ const TeamDetail = () => {
     }
   };
 
-  if (!team) return <p>Loading...</p>;
+  if (!team) return <p className="empty-favourites">Loading...</p>;
 
   const countryCode = countryNameToCode[team.country];
 

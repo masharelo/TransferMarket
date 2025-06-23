@@ -47,7 +47,7 @@ const PlayerDetail = () => {
     }
   };
 
-  if (!player) return <p>Loading...</p>;
+  if (!player) return <p className="empty-favourites">Loading...</p>;
 
   const countryCode = countryNameToCode[player.nationality];
 

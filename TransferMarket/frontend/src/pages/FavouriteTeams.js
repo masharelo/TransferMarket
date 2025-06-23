@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import TeamCard from '../components/TeamCard';
-import './FavouriteTeams.css'
+import './FavouriteTeams.css';
 
 const FavouriteTeams = () => {
   const [teams, setTeams] = useState([]);
@@ -76,9 +76,9 @@ const FavouriteTeams = () => {
     <div className="favourites-page">
       <h1>⭐ Favourite Teams</h1>
       {loading ? (
-        <p>Loading teams...</p>
+        <p className="empty-favourites">Loading teams...</p>
       ) : teams.length === 0 && showEmptyMessage ? (
-        <p>You haven't added any favourite teams yet.</p>
+        <p className="empty-favourites">You haven't added any favourite teams yet.</p>
       ) : (
         <div className="teams-grid">
           {teams.map(team => {

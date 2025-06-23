@@ -125,3 +125,9 @@ body {
     justify-content: center;
   }
 }
+
+.empty-favourites{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

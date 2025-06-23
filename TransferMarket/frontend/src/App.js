@@ -15,6 +15,9 @@ import PostDetail from './pages/PostDetail';
 import TeamDetail from './pages/TeamDetail';
 import PlayerDetail from './pages/PlayerDetail';
 import Layout from './components/Layout'; 
+import NotAuthorized from './pages/NotAuthorized';
+import AdminDashboard from './pages/AdmimDashboard';
+import AdminRoute from './routes/AdminRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
 
@@ -36,6 +39,8 @@ function App() {
       <Route path="/post/:postId" element={<PrivateRoute> <Layout> <PostDetail /> </Layout> </PrivateRoute>} />
       <Route path="/teams/:teamId" element={<PrivateRoute> <Layout> <TeamDetail /> </Layout> </PrivateRoute>} />
       <Route path="/players/:playerId" element={<PrivateRoute> <Layout> <PlayerDetail /> </Layout> </PrivateRoute>} />
+      <Route path="/admin" element={<AdminRoute> <Layout> <AdminDashboard /> </Layout> </AdminRoute>} />
+      <Route path="/not-authorized" element={<NotAuthorized/>} />
     </Routes>
   );
 }

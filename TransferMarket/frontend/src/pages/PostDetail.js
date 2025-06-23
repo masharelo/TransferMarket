@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import './PostDetail.css';
 import '../components/Posts.css';
+import formatDate from '../utils/FormatDate';
 
 const PostDetail = () => {
   const { postId } = useParams();
@@ -53,7 +54,9 @@ const PostDetail = () => {
           <p className="post-detail-paragraph">{post.paragraph}</p>
           <p className="post-detail-meta">
             <small>
-              Uploaded: {new Date(post.uploaded).toLocaleString()} | Type: {post.type}
+              Uploaded: {formatDate(post.uploaded)} <br /> 
+              Type: {post.type} <br />
+              Author: {post.author_name} {post.author_surname}
             </small>
           </p>
           <p><strong>Tags:</strong> {post.tags}</p>

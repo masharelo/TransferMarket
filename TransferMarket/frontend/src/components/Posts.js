@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './Posts.css';
+import formatDate from '../utils/FormatDate';
 
 const Posts = () => {
   const token = localStorage.getItem('token');
@@ -99,7 +100,8 @@ const Posts = () => {
             />
             <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
             <small className="post-meta">
-              {new Date(post.uploaded).toLocaleString()}
+              {formatDate(post.uploaded)} <br />
+              Author: {post.author_name} {post.author_surname}
             </small>
           </Link>
         ))}
