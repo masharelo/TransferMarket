@@ -1,5 +1,5 @@
 export default function formatValue(value) {
-  if (value == null || isNaN(value)) return '???';
+  if (value == null || isNaN(value)) return ' N/A';
 
   if (value >= 1_000_000_000) {
     const billions = value / 1_000_000_000;

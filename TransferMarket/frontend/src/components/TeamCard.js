@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./TeamCard.css";
+import formatValue from "../utils/FormatValue";
 
 const TeamCard = ({ team, onToggleFavourite }) => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const TeamCard = ({ team, onToggleFavourite }) => {
 
       <div className="info">
         📍 {team.country}
-        {team.city ? `, ${team.city}` : ""} - 🏟️ {team.stadium}
+        {team.city ? `, ${team.city}` : ""} - 🏟️ {team.stadium} —💰 €{formatValue(team.squad_value) ?? "N/A"}
       </div>
     </div>
   );

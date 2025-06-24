@@ -70,7 +70,7 @@ const PlayerDetail = () => {
           />
         </div>
         <h2>{player.name} {player.surname}</h2>
-        <p><strong>Club: ???</strong>{player.club}</p>
+        <p><strong>Club:</strong> {player.current_club || 'No club'}</p>
         <p><strong>Position:</strong> {player.position}</p>
         <p>
           <strong>Nationality:</strong> {player.nationality}{' '}

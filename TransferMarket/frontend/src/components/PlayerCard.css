@@ -3,7 +3,7 @@
   color: white;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  width: 200px;
+  width: 220px;
   padding: 1rem;
   position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -38,7 +38,7 @@
   transition: transform 0.2s ease;
   position: absolute;
   left: 19px;
-  top: 50%;
+  top: 43%;
   transform: translateY(-50%);
   z-index: 2;
 }
@@ -91,4 +91,8 @@
   margin-left: 4px;
   position: relative;
   top: 2px;
+}
+
+.player-club-in-card {
+  color: teal !important;
 }

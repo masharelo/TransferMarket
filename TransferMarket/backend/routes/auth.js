@@ -74,10 +74,32 @@ router.get('/favourite_players', authMiddleware, async (req, res) => {
 
   try {
     const [results] = await sequelize.query(`
-      SELECT p.*
-      FROM favourite_players f
-      JOIN players p ON f.player_id = p.player_id
+      SELECT 
+        p.*, 
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite,
+        t.name AS current_club
+      FROM players p
+      INNER JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+
+      LEFT JOIN (
+        SELECT c1.player_id, c1.team_to, c1.end_date
+        FROM contracts c1
+        INNER JOIN (
+          SELECT player_id, MAX(start_date) AS max_start
+          FROM contracts
+          WHERE end_date >= CURRENT_DATE
+            AND type IN ('transfer', 'loan', 'contract')
+          GROUP BY player_id
+        ) c2
+        ON c1.player_id = c2.player_id AND c1.start_date = c2.max_start
+      ) current_contract
+        ON current_contract.player_id = p.player_id
+
+      LEFT JOIN teams t 
+        ON t.team_id = current_contract.team_to
+
       WHERE f.user_id = :userId
+      ORDER BY p.player_id
     `, {
       replacements: { userId },
     });
@@ -132,9 +154,27 @@ router.get('/favourite_teams', authMiddleware, async (req, res) => {
 
   try {
     const [results] = await sequelize.query(`
-      SELECT t.*
+      SELECT 
+        t.*, 
+        TRUE AS is_favourite,
+        sq.squad_value
       FROM favourite_teams f
       JOIN teams t ON f.team_id = t.team_id
+      LEFT JOIN (
+        WITH latest_contracts AS (
+          SELECT DISTINCT ON (player_id) *
+          FROM contracts
+          ORDER BY player_id, start_date DESC
+        )
+        SELECT 
+          t.team_id,
+          SUM(p.value) AS squad_value
+        FROM latest_contracts lc
+        JOIN players p ON lc.player_id = p.player_id
+        JOIN teams t ON lc.team_to = t.team_id
+        WHERE lc.end_date >= CURRENT_DATE
+        GROUP BY t.team_id
+      ) sq ON sq.team_id = t.team_id
       WHERE f.user_id = :userId
     `, {
       replacements: { userId },
@@ -276,26 +316,56 @@ router.get('/posts/:postId', authMiddleware, async (req, res) => {
 
 // Show Teams
 router.get('/teams', authMiddleware, async (req, res) => {
-  const { offset = 0, limit = 20 } = req.query;
+  const { offset = 0, limit = 20, name, country, sortBy } = req.query;
   const userId = req.user.user_id;
 
   try {
-    const [teams] = await sequelize.query(`
+    let baseQuery = `
       SELECT t.*, 
-        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite,
+        sq.squad_value
       FROM teams t
-      LEFT JOIN favourite_teams f ON f.team_id = t.team_id AND f.user_id = :userId
-      ORDER BY t.team_id
-      OFFSET :offset LIMIT :limit
-    `, {
-      replacements: {
-        offset: parseInt(offset),
-        limit: parseInt(limit),
-        userId,
-      }
-    });
+      LEFT JOIN favourite_teams f 
+        ON f.team_id = t.team_id AND f.user_id = :userId
+      LEFT JOIN (
+        WITH latest_contracts AS (
+          SELECT DISTINCT ON (player_id) *
+          FROM contracts
+          ORDER BY player_id, start_date DESC
+        )
+        SELECT 
+          t.team_id,
+          SUM(p.value) AS squad_value
+        FROM latest_contracts lc
+        JOIN players p ON lc.player_id = p.player_id
+        JOIN teams t ON lc.team_to = t.team_id
+        WHERE lc.end_date >= CURRENT_DATE
+        GROUP BY t.team_id
+      ) sq ON sq.team_id = t.team_id
+      WHERE 1=1
+    `;
 
+    const replacements = { offset: parseInt(offset), limit: parseInt(limit), userId };
+    if (name) {
+      baseQuery += ` AND LOWER(t.name) LIKE :likeName`;
+      replacements.likeName = `%${name.toLowerCase()}%`;
+    }
+    if (country) {
+      baseQuery += ` AND LOWER(t.country) LIKE :likeCountry`;
+      replacements.likeCountry = `%${country.toLowerCase()}%`;
+    }
+
+    if (sortBy === 'squad_value') {
+      baseQuery += ` ORDER BY sq.squad_value DESC NULLS LAST, t.team_id`;
+    } else {
+      baseQuery += ` ORDER BY t.team_id`;
+    }
+
+    baseQuery += ` OFFSET :offset LIMIT :limit`;
+
+    const [teams] = await sequelize.query(baseQuery, { replacements });
     res.json(teams);
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch teams' });
@@ -341,10 +411,31 @@ router.get('/players', authMiddleware, async (req, res) => {
 
   try {
     const [players] = await sequelize.query(`
-      SELECT p.*, 
-        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+      SELECT 
+        p.*,
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite,
+        t.name AS current_club
       FROM players p
-      LEFT JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+      LEFT JOIN favourite_players f 
+        ON f.player_id = p.player_id AND f.user_id = :userId
+
+      LEFT JOIN (
+        SELECT c1.player_id, c1.team_to, c1.end_date
+        FROM contracts c1
+        INNER JOIN (
+          SELECT player_id, MAX(start_date) AS max_start
+          FROM contracts
+          WHERE end_date >= CURRENT_DATE
+            AND type IN ('transfer', 'loan', 'contract')
+          GROUP BY player_id
+        ) c2
+        ON c1.player_id = c2.player_id AND c1.start_date = c2.max_start
+      ) current_contract
+        ON current_contract.player_id = p.player_id
+
+      LEFT JOIN teams t 
+        ON t.team_id = current_contract.team_to
+
       ORDER BY p.player_id
       OFFSET :offset LIMIT :limit
     `, {
@@ -390,26 +481,46 @@ router.get('/players/:playerId', authMiddleware, async (req, res) => {
   const userId = req.user.user_id;
 
   try {
-    const [players] = await sequelize.query(`
-      SELECT p.*,
-        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite
+    const [results] = await sequelize.query(`
+      SELECT 
+        p.*, 
+        CASE WHEN f.user_id IS NOT NULL THEN TRUE ELSE FALSE END AS is_favourite,
+        t.name AS current_club
       FROM players p
-      LEFT JOIN favourite_players f ON f.player_id = p.player_id AND f.user_id = :userId
+      LEFT JOIN favourite_players f 
+        ON f.player_id = p.player_id AND f.user_id = :userId
+
+      LEFT JOIN (
+        SELECT c1.player_id, c1.team_to
+        FROM contracts c1
+        INNER JOIN (
+          SELECT player_id, MAX(start_date) AS max_start
+          FROM contracts
+          WHERE end_date >= CURRENT_DATE
+            AND type IN ('transfer', 'loan')
+          GROUP BY player_id
+        ) c2
+        ON c1.player_id = c2.player_id AND c1.start_date = c2.max_start
+      ) current_contract
+        ON current_contract.player_id = p.player_id
+
+      LEFT JOIN teams t 
+        ON t.team_id = current_contract.team_to
+
       WHERE p.player_id = :playerId
+      LIMIT 1
     `, {
-      replacements: { playerId, userId }
+      replacements: { playerId, userId },
     });
 
-    const player = players[0];
-
-    if (!player) {
+    if (!results.length) {
       return res.status(404).json({ error: 'Player not found' });
     }
 
-    res.json(player);
+    res.json(results[0]);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to fetch player' });
+    res.status(500).json({ error: 'Failed to fetch player detail' });
   }
 });
 
@@ -445,7 +556,35 @@ router.get('/transfers', authMiddleware, async (req, res) => {
   }
 });
 
-// Get current squad of a team
+// Get all team squads
+router.get('/teams-with-squad', authMiddleware, async (req, res) => {
+  try {
+    const [teams] = await sequelize.query(`
+      WITH latest_contracts AS (
+        SELECT DISTINCT ON (player_id) *
+        FROM contracts
+        ORDER BY player_id, start_date DESC
+      )
+      SELECT 
+        t.team_id,
+        t.name,
+        t.country,
+        SUM(p.value) AS squad_value
+      FROM latest_contracts lc
+      JOIN players p ON lc.player_id = p.player_id
+      JOIN teams t ON lc.team_to = t.team_id
+      WHERE lc.end_date >= CURRENT_DATE
+      GROUP BY t.team_id, t.name, t.country
+    `);
+
+    res.json(teams);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch teams with squad values' });
+  }
+});
+
+// Get squad of a specific team
 router.get('/teams/:teamId/squad', authMiddleware, async (req, res) => {
   const { teamId } = req.params;
 
@@ -524,5 +663,6 @@ router.get('/teams/:teamId/contracts', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch contracts' });
   }
 });
+
 
 module.exports = router;

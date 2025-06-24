@@ -40,7 +40,7 @@ const PlayerCard = ({ player, onToggleFavourite }) => {
           <span className="nationality-emoji" title="Unknown nationality">🌍</span>
         )}
       </h4>
-      <p>{player.club}</p>
+      <p className="player-club-in-card">{player.current_club || 'No club'}</p>
       <p>{player.position} | €{formatValue(player.value)}</p>
     </div>
   );
