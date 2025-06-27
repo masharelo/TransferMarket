@@ -693,4 +693,43 @@ router.get('/stats/player/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Edit user data
+router.put('/users/:id', async (req, res) => {
+  const { id } = req.params;
+  const { username, email, name, surname } = req.body;
+
+  try {
+    const [users] = await sequelize.query(`SELECT * FROM users WHERE user_id = :id`, {
+      replacements: { id }
+    });
+
+    const user = users[0];
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const [existing] = await sequelize.query(
+      `SELECT * FROM users WHERE (username = :username OR email = :email) AND user_id != :id`,
+      { replacements: { username, email, id } }
+    );
+
+    if (existing.length > 0) {
+      return res.status(409).json({ error: "Username or email already exists" });
+    }
+
+    await sequelize.query(
+      `UPDATE users SET username = :username, email = :email, name = :name, surname = :surname WHERE user_id = :id`,
+      { replacements: { username, email, name, surname, id } }
+    );
+
+    const [updatedUsers] = await sequelize.query(`SELECT * FROM users WHERE user_id = :id`, {
+      replacements: { id }
+    });
+
+    return res.json(updatedUsers[0]);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+});
+
+
 module.exports = router;
