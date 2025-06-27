@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import './TeamDetail.css';
 import countryNameToCode from "../utils/CountryToCode";
@@ -10,6 +10,7 @@ import formatTotalValue from "../utils/FormatTotalValue";
 
 const TeamDetail = () => {
   const { teamId } = useParams();
+  const navigate = useNavigate();
   const [team, setTeam] = useState(null);
   const [activeTab, setActiveTab] = useState("Squad");
   const [tabData, setTabData] = useState([]);
@@ -28,7 +29,6 @@ const TeamDetail = () => {
         console.error("Failed to fetch team:", err);
       }
     };
-
     fetchTeam();
   }, [teamId]);
 
@@ -54,7 +54,6 @@ const TeamDetail = () => {
     const fetchTabData = async () => {
       const token = localStorage.getItem("token");
       setLoadingTab(true);
-
       try {
         let url = "";
         switch (activeTab) {
@@ -73,11 +72,9 @@ const TeamDetail = () => {
           default:
             return;
         }
-
         const res = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
-
         setTabData(res.data);
         if (activeTab === "Squad") {
           const totalValue = res.data.reduce((sum, player) => {
@@ -86,7 +83,6 @@ const TeamDetail = () => {
           }, 0);
           setSquadValue(totalValue);
         }
-
       } catch (err) {
         console.error(`Failed to fetch ${activeTab.toLowerCase()}:`, err);
         setTabData([]);
@@ -94,7 +90,6 @@ const TeamDetail = () => {
         setLoadingTab(false);
       }
     };
-
     fetchTabData();
   }, [activeTab, teamId]);
 
@@ -164,7 +159,7 @@ const TeamDetail = () => {
           {loadingTab ? (
             <p>Loading {activeTab.toLowerCase()}...</p>
           ) : tabData.length === 0 ? (
-            <p className="empty-favourites">No {activeTab.toLowerCase()} data available.</p>
+            <p className="no-info-message">No {activeTab.toLowerCase()} data available.</p>
           ) : (
             <table className="transfers-table">
               <thead>
@@ -215,7 +210,11 @@ const TeamDetail = () => {
                   tabData.map((player, index) => (
                     <tr key={player.player_id || index}>
                       <td>{index + 1}</td>
-                      <td>{player.name} {player.surname}
+                      <td
+                        className="clickable-player-cell"
+                        onClick={() => navigate(`/players/${player.player_id}`)}
+                      >
+                        {player.name} {player.surname}
                         {countryNameToCode[player.nationality] ? (
                           <img
                             className="team-detail-flag"
@@ -238,7 +237,11 @@ const TeamDetail = () => {
                   tabData.map((item, index) => (
                     <tr key={item.contract_id || index}>
                       <td>{index + 1}</td>
-                      <td>{item.player_name} {item.player_surname}
+                      <td
+                        className="clickable-player-cell"
+                        onClick={() => navigate(`/players/${item.player_id}`)}
+                      >
+                        {item.player_name} {item.player_surname}
                         {countryNameToCode[item.player_nationality] ? (
                           <img
                             className="team-detail-flag"
@@ -266,7 +269,11 @@ const TeamDetail = () => {
                   tabData.map((item, index) => (
                     <tr key={item.contract_id || index}>
                       <td>{index + 1}</td>
-                      <td>{item.player_name} {item.player_surname}
+                      <td
+                        className="clickable-player-cell"
+                        onClick={() => navigate(`/players/${item.player_id}`)}
+                      >
+                        {item.player_name} {item.player_surname}
                         {countryNameToCode[item.player_nationality] ? (
                           <img
                             className="team-detail-flag"
@@ -288,7 +295,11 @@ const TeamDetail = () => {
                   tabData.map((item, index) => (
                     <tr key={item.contract_id || index}>
                       <td>{index + 1}</td>
-                      <td>{item.player_name} {item.player_surname}
+                      <td
+                        className="clickable-player-cell"
+                        onClick={() => navigate(`/players/${item.player_id}`)}
+                      >
+                        {item.player_name} {item.player_surname}
                         {countryNameToCode[item.player_nationality] ? (
                           <img
                             className="team-detail-flag"

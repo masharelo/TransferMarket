@@ -17,6 +17,7 @@
   text-align: center;
   flex-shrink: 0;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  margin-left: 30px;
 }
 
 .custom-player-img-wrapper {
@@ -92,7 +93,7 @@
   flex-wrap: wrap;
   gap: 10px;
   justify-content: flex-start;
-  margin-bottom: 1rem;
+  margin-bottom: 28px;
 }
 
 .player-detail-stats-nav-buttons button {
@@ -183,3 +184,39 @@
   }
 }
 
+.club-header {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  background: linear-gradient(to right, white 80%, rgba(255,255,255,0));
+  border-radius: 12px;
+  margin-left: 20px;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+  cursor: pointer;
+}
+
+.club-logo {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
+.club-name {
+  font-weight: bold;
+  color: #171033;
+  font-size: 18px;
+}
+
+.no-stats-message {
+  text-align: center;
+  margin-top: 60px;
+  width: 100%;
+  font-style: italic;
+  color: #555;
+  font-size: 22px;
+}

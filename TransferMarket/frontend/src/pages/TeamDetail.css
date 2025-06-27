@@ -5,7 +5,7 @@
   gap: 30px;
   width: 100%;
   max-width: 95%;
-  margin-left: 20px;
+  margin-left: 40px;
 }
 
 .team-detail-card {
@@ -198,4 +198,17 @@
 .golden-team {
   color: gold;
   font-weight: bold;
+}
+
+.clickable-player-cell {
+  cursor: pointer;
+}
+
+.no-info-message {
+  text-align: center;
+  margin-top: 60px;
+  width: 100%;
+  font-style: italic;
+  color: #555;
+  font-size: 22px;
 }
