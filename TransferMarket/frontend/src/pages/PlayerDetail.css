@@ -79,3 +79,107 @@
   font-size: 16px;
   vertical-align: middle;
 }
+
+.player-stats-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 300px;
+}
+
+.player-detail-stats-nav-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+}
+
+.player-detail-stats-nav-buttons button {
+  font-family: 'Poppins', sans-serif;
+  background-color: #171033;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  height: 50px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 0 16px;
+}
+
+.player-detail-stats-nav-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.player-detail-stats-nav-buttons button::before {
+  content: "";
+  position: absolute;
+  top: -80%;
+  left: -80%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: translateX(-100%) rotate(25deg);
+  pointer-events: none;
+}
+
+.player-detail-stats-nav-buttons button:hover::before {
+  animation: diagonal-shine 0.75s forwards;
+}
+
+.player-detail-stats-nav-buttons button.active {
+  background-color: #302865;
+  border: 3px solid #171033;
+  font-weight: bold;
+}
+
+.player-stats-section {
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .custom-player-layout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .player-stats-wrapper {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .player-detail-stats-nav-buttons {
+    justify-content: flex-start;
+  }
+
+  .player-detail-stats-nav-buttons button {
+    flex: 1 1 120px;
+    max-width: 160px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .custom-player-card {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-player-card {
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-player-card {
+    max-width: 100%;
+    min-width: 200px;
+  }
+}
+

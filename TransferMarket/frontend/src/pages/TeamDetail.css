@@ -178,6 +178,7 @@
 
 .nav-buttons-in-team-card .active-tab {
   background-color: #302865;
+  border: 3px solid #171033;
   font-weight: bold;
 }
 

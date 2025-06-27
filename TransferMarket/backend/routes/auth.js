@@ -664,5 +664,33 @@ router.get('/teams/:teamId/contracts', authMiddleware, async (req, res) => {
   }
 });
 
+// Get stats for a single player
+router.get('/stats/player/:id', authMiddleware, async (req, res) => {
+  const playerId = req.params.id;
+
+  const query = `
+    SELECT 
+      s.*, 
+      t.name AS team_name, 
+      t.type AS team_type, 
+      t.logo AS team_logo
+    FROM stats s
+    JOIN teams t ON s.team_id = t.team_id
+    WHERE s.player_id = :playerId
+    ORDER BY s.season DESC
+  `;
+
+  try {
+    const results = await sequelize.query(query, {
+      replacements: { playerId },
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching player stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 module.exports = router;
