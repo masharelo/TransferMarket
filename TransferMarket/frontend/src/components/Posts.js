@@ -14,7 +14,7 @@ const Posts = () => {
     favourites: false,
   });
   const [visibleCount, setVisibleCount] = useState(5);
-  const [titleFilter, setTitleFilter] = useState('');
+  const [textFilter, setTextFilter] = useState('');
 
   const handleCheckboxChange = (e) => {
     setFilters(prev => ({
@@ -24,8 +24,9 @@ const Posts = () => {
     setVisibleCount(5);
   };
 
-  const handleTitleChange = (e) => {
-    setTitleFilter(e.target.value);
+  const handleTextChange = (e) => {
+    setTextFilter(e.target.value);
+    setVisibleCount(5);
   };
 
   useEffect(() => {
@@ -55,9 +56,21 @@ const Posts = () => {
 
   const loadMore = () => setVisibleCount(prev => prev + 5);
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(titleFilter.toLowerCase())
-  );
+  const filteredPosts = posts.filter(post => {
+    const lowerText = textFilter.toLowerCase();
+    const inTitle = post.title.toLowerCase().includes(lowerText);
+
+    let tags = [];
+    if (Array.isArray(post.tags)) {
+      tags = post.tags.map(t => t.toLowerCase());
+    } else if (typeof post.tags === 'string') {
+      tags = post.tags.split(',').map(t => t.trim().toLowerCase());
+    }
+
+    const inTags = tags.some(tag => tag.includes(lowerText));
+
+    return inTitle || inTags;
+  });
 
   return (
     <div className="posts-container">
@@ -78,9 +91,9 @@ const Posts = () => {
 
         <input
           type="text"
-          placeholder="Filter by title..."
-          value={titleFilter}
-          onChange={handleTitleChange}
+          placeholder="Filter by title or tag..."
+          value={textFilter}
+          onChange={handleTextChange}
           className="title-filter"
         />
       </div>

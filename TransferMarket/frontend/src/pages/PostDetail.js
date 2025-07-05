@@ -38,7 +38,7 @@ const PostDetail = () => {
     fetchPost();
   }, [postId, token]);
 
-  if (!post) return <p>Loading post...</p>;
+  if (!post) return <p className='empty-favourites'>Loading post...</p>;
 
   return (
     <div className="post-detail-container">

@@ -32,10 +32,10 @@ const Register = () => {
       <div className="auth-card">
         <h1>TransferMarket</h1>
         <form onSubmit={handleSubmit}>
-          <input name="username" placeholder="Username" onChange={handleChange} required />
-          <input name="name" placeholder="First Name" onChange={handleChange} required />
-          <input name="surname" placeholder="Last Name" onChange={handleChange} required />
-          <input name="email" type="email" placeholder="Email" onChange={handleChange} required />
+          <input name="username" placeholder="Username" onChange={handleChange} required autoComplete="off" />
+          <input name="name" placeholder="First Name" onChange={handleChange} required autoComplete="off" />
+          <input name="surname" placeholder="Last Name" onChange={handleChange} required autoComplete="off" />
+          <input name="email" type="email" placeholder="Email" onChange={handleChange} required autoComplete="off" />
           <input name="dob" type="date" onChange={handleChange} required />
           <input name="password" type="password" placeholder="Password" onChange={handleChange} required />
           <button type="submit">Register</button>

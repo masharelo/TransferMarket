@@ -8,22 +8,32 @@
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 2rem;
-  justify-content: center;
+  justify-content: flex-start;
   margin-bottom: 2rem;
+  background-color: #171033;
+  border-radius: 20px;
+  margin-left: 60px;
+  margin-right: 60px;
+  padding-top: 50px;
+  padding-bottom: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .post-detail-image {
-  width: 100%;
+  width: 70%;
   max-width: 400px;
   height: auto;
   object-fit: contain;
   border-radius: 8px;
   background-color: #f0f0f0;
   flex-shrink: 0;
+  margin-left: 50px;
+  margin-right: 32px;
 }
 
 .post-detail-text {
-  max-width: 600px;
+  max-width: 55%;
   flex: 1;
 }
 

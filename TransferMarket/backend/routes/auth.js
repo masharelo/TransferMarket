@@ -268,6 +268,8 @@ router.get('/posts', authMiddleware, async (req, res) => {
       baseQuery += ` WHERE ` + whereClauses.join(' AND ');
     }
 
+    baseQuery += ` ORDER BY p.uploaded DESC`;
+
     const [posts] = await sequelize.query(baseQuery, { replacements });
 
     const filteredPosts = fav === 'true'
@@ -694,7 +696,7 @@ router.get('/stats/player/:id', authMiddleware, async (req, res) => {
 });
 
 // Edit user data
-router.put('/users/:id', async (req, res) => {
+router.put('/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
   const { username, email, name, surname } = req.body;
 
