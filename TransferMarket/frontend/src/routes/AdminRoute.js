@@ -5,9 +5,15 @@ import { AuthContext } from '../context/AuthContext';
 const AdminRoute = ({ children }) => {
   const { isLoggedIn, user } = useContext(AuthContext);
 
-  return isLoggedIn && user?.is_admin
-    ? children
-    : <Navigate to="/not-authorized" />;
+  if (!isLoggedIn) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!user?.is_admin) {
+    return <Navigate to="/not-authorized" />;
+  }
+
+  return children;
 };
 
 export default AdminRoute;
