@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './EditPosts.css';
 import formatDate from '../../utils/FormatDate';
 
 const EditPosts = () => {
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
   const [mode, setMode] = useState('new');
   const [posts, setPosts] = useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -153,23 +155,32 @@ const EditPosts = () => {
         </form>
       )}
 
-      {(mode === 'edit_delete') && (
+      {mode === 'edit_delete' && (
         <div className="editpost-posts">
           <input type="text" placeholder="Filter by title" value={filterTitle} onChange={(e) => setFilterTitle(e.target.value)} className="posts-filter" />
-          <div className="editpost-grid">
-            {filteredPosts.map((post) => (
-              <div key={post.post_id} className="post-card" style={{ cursor:"pointer" }}>
-                <h3 className="post-title">{post.title}</h3>
-                <img src={`http://localhost:5000/uploads/posts/${post.picture}`} alt="post" className="post-image" />
-                <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
-                <small className="post-meta">{formatDate(post.uploaded)} <br />Author: {post.author_name} {post.author_surname}</small>
-                <div className="edit-info-buttons">
-                  <button className="editpost-action-button" onClick={() => handleEditClick(post)}>Edit</button>
-                  <button className="editpost-action-button" onClick={() => handleDelete(post.post_id)}>Delete</button>
+          {filteredPosts.length === 0 ? (
+            <p className="no-info-message">No posts with similar title.</p>
+          ) : (
+            <div className="editpost-grid">
+              {filteredPosts.map((post) => (
+                <div
+                  key={post.post_id}
+                  className="post-card"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/post/${post.post_id}`)}
+                >
+                  <h3 className="post-title">{post.title}</h3>
+                  <img src={`http://localhost:5000/uploads/posts/${post.picture}`} alt="post" className="post-image" />
+                  <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
+                  <small className="post-meta">{formatDate(post.uploaded)} <br />Author: {post.author_name} {post.author_surname}</small>
+                  <div className="edit-info-buttons" onClick={(e) => e.stopPropagation()}>
+                    <button className="editpost-action-button" onClick={() => handleEditClick(post)}>Edit</button>
+                    <button className="editpost-action-button" onClick={() => handleDelete(post.post_id)}>Delete</button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

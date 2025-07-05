@@ -10,8 +10,8 @@ const { sequelize } = require('../config/db');
 const validFolders = ['posts', 'teams', 'players', 'users'];
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    const folder = req.body.folder;
+  destination: function (req, file, cb) {
+    const folder = req.body.folder || req.query.folder;
     if (!validFolders.includes(folder)) {
       return cb(new Error('Invalid upload folder'));
     }
@@ -38,7 +38,7 @@ router.get('/users', authMiddleware, adminOnly, async (req, res) => {
   }
 });
 
-// Add posts to database
+// Add post to database
 router.post('/add_post', authMiddleware, adminOnly, upload.single('picture'), async (req, res) => {
   try {
     const { title, paragraph, type, tags } = req.body;
@@ -74,7 +74,7 @@ router.put('/posts/:postId', authMiddleware, adminOnly, upload.single('picture')
   const { postId } = req.params;
   const { title, paragraph, type, tags } = req.body;
   const newPicture = req.file ? req.file.filename : null;
-
+  
   try {
     const [result] = await sequelize.query(
       'SELECT picture FROM posts WHERE post_id = :postId',
@@ -137,5 +137,97 @@ router.delete('/posts/:postId', authMiddleware, adminOnly, async (req, res) => {
   }
 });
 
+// Add team to database
+router.post('/add_team', authMiddleware, adminOnly, upload.single('logo'), async (req, res) => {
+  try {
+    const { name, city, country, stadium, stadium_capacity, founded, type } = req.body;
+    const logo = req.file ? req.file.filename : null;
+
+    await sequelize.query(
+      `INSERT INTO teams (name, city, country, stadium, stadium_capacity, founded, type, logo)
+       VALUES (:name, :city, :country, :stadium, :stadium_capacity, :founded, :type, :logo)`,
+      {
+        replacements: {
+          name, city, country, stadium,
+          stadium_capacity: Number(stadium_capacity),
+          founded, type, logo
+        }
+      }
+    );
+
+    res.status(201).json({ message: 'Team created successfully' });
+  } catch (err) {
+    console.error('Error adding team:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Edit team
+router.put('/teams/:teamId', authMiddleware, adminOnly, upload.single('logo'), async (req, res) => {
+  const { teamId } = req.params;
+  const { name, city, country, stadium, stadium_capacity, founded, type } = req.body;
+  const newLogo = req.file ? req.file.filename : null;
+  
+  try {
+    const [result] = await sequelize.query(
+      'SELECT logo FROM teams WHERE team_id = :teamId',
+      { replacements: { teamId } }
+    );
+
+    const oldLogo = result[0]?.logo;
+    const fields = { name, city, country, stadium, stadium_capacity, founded, type };
+    if (newLogo) fields.logo = newLogo;
+
+    const setClause = Object.keys(fields)
+      .map(key => `${key} = :${key}`)
+      .join(', ');
+
+    await sequelize.query(
+      `UPDATE teams SET ${setClause} WHERE team_id = :teamId`,
+      {
+        replacements: { ...fields, stadium_capacity: Number(stadium_capacity), teamId }
+      }
+    );
+
+    if (newLogo && oldLogo) {
+      const oldPath = path.join(__dirname, '..', 'uploads', 'teams', oldLogo);
+      fs.unlink(oldPath, () => {});
+    }
+
+    res.json({ message: 'Team updated successfully' });
+  } catch (err) {
+    console.error('Error updating team:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete team
+router.delete('/teams/:teamId', authMiddleware, adminOnly, async (req, res) => {
+  const { teamId } = req.params;
+
+  try {
+    const [result] = await sequelize.query(
+      'SELECT logo FROM teams WHERE team_id = :teamId',
+      { replacements: { teamId } }
+    );
+
+    const logo = result[0]?.logo;
+
+    await sequelize.query(
+      'DELETE FROM teams WHERE team_id = :teamId',
+      { replacements: { teamId } }
+    );
+
+    if (logo) {
+      const logoPath = path.join(__dirname, '..', 'uploads', 'teams', logo);
+      fs.unlink(logoPath, () => {});
+    }
+
+    res.json({ message: 'Team deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting team:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
 module.exports = router;

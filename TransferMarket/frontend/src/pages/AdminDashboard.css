@@ -5,7 +5,7 @@
 .dashboard-title {
   font-size: 1.875rem;
   font-weight: 700;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
   text-align: center;
 }
 
@@ -31,7 +31,8 @@
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 40px rgb(34, 69, 102, 1);
+
 }
 
 .card-title {
