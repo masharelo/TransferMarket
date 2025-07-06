@@ -355,5 +355,87 @@ router.delete('/players/:playerId', authMiddleware, adminOnly, async (req, res) 
   }
 });
 
+// Add contract
+router.post('/add_contract', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const { type, player_id, team_from, team_to, start_date, end_date, price } = req.body;
+
+    await sequelize.query(
+      `INSERT INTO contracts (type, player_id, team_from, team_to, start_date, end_date, price)
+       VALUES (:type, :player_id, :team_from, :team_to, :start_date, :end_date, :price)`,
+      {
+        replacements: {
+          type,
+          player_id,
+          team_from,
+          team_to,
+          start_date,
+          end_date: end_date || null,
+          price: price ? Number(price) : null
+        }
+      }
+    );
+
+    res.status(201).json({ message: 'Contract added successfully' });
+  } catch (err) {
+    console.error('Error adding contract:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update contract
+router.put('/contracts/:contractId', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const { contractId } = req.params;
+    const { type, player_id, team_from, team_to, start_date, end_date, price } = req.body;
+
+    await sequelize.query(
+      `UPDATE contracts
+       SET type = :type,
+           player_id = :player_id,
+           team_from = :team_from,
+           team_to = :team_to,
+           start_date = :start_date,
+           end_date = :end_date,
+           price = :price
+       WHERE contract_id = :contractId`,
+      {
+        replacements: {
+          contractId,
+          type,
+          player_id,
+          team_from,
+          team_to,
+          start_date,
+          end_date: end_date || null,
+          price: price ? Number(price) : null
+        }
+      }
+    );
+
+    res.json({ message: 'Contract updated successfully' });
+  } catch (err) {
+    console.error('Error updating contract:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete contract
+router.delete('/contracts/:contractId', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const { contractId } = req.params;
+
+    await sequelize.query(
+      `DELETE FROM contracts WHERE contract_id = :contractId`,
+      { replacements: { contractId } }
+    );
+
+    res.json({ message: 'Contract deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting contract:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 module.exports = router;

@@ -532,7 +532,7 @@ router.get('/transfers', authMiddleware, async (req, res) => {
 
   try {
     const [transfers] = await sequelize.query(`
-      SELECT c.type, c.player_id, c.team_from, c.team_to, c.start_date, c.end_date, c.price,
+      SELECT c.contract_id, c.type, c.player_id, c.team_from, c.team_to, c.start_date, c.end_date, c.price,
              p.name AS player_name, p.surname AS player_surname, p.picture AS player_picture, 
              t1.name AS team_from_name, t1.logo AS team_from_logo,
              t2.name AS team_to_name, t2.logo AS team_to_logo

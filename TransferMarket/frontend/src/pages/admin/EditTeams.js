@@ -51,7 +51,7 @@ const EditTeams = () => {
     e.preventDefault();
 
     if (!isRegularDate(formData.founded)) {
-      alert('Please enter a valid date between 1850 and today.');
+      alert('Please enter a valid date.');
       return;
     }
 
@@ -89,7 +89,7 @@ const EditTeams = () => {
     e.preventDefault();
 
     if (!isRegularDate(formData.founded)) {
-      alert('Please enter a valid date between 1850 and today.');
+      alert('Please enter a valid date.');
       return;
     }
 

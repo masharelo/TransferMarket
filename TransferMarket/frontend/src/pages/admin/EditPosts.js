@@ -18,6 +18,7 @@ const EditPosts = () => {
     tags: '',
   });
   const [filterTitle, setFilterTitle] = useState('');
+  const [error, setError] = useState('');
 
   const fetchPosts = useCallback(async () => {
     try {
@@ -43,8 +44,18 @@ const EditPosts = () => {
     }
   };
 
+  const validateForm = () => {
+    if (!formData.title || !formData.paragraph || !formData.type || !formData.tags) {
+      setError('Please fill out all fields.');
+      return false;
+    }
+    setError('');
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     const data = new FormData();
     data.append('title', formData.title);
     data.append('paragraph', formData.paragraph);
@@ -93,6 +104,7 @@ const EditPosts = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     const data = new FormData();
     data.append('title', formData.title);
     data.append('paragraph', formData.paragraph);
@@ -123,23 +135,28 @@ const EditPosts = () => {
           onClick={() => {
             setMode('new');
             setSelectedPost(null);
-            setFormData({
-              title: '',
-              paragraph: '',
-              picture: null,
-              type: 'rumours',
-              tags: '',
-            });
+            setFormData({ title: '', paragraph: '', picture: null, type: 'rumours', tags: '' });
+            setError('');
           }}
           className="edit-buttons"
         >
           New Post
         </button>
-        <button onClick={() => { setMode('edit_delete'); setSelectedPost(null); }} className="edit-buttons">Edit/Delete</button>
+        <button
+          onClick={() => {
+            setMode('edit_delete');
+            setSelectedPost(null);
+            setError('');
+          }}
+          className="edit-buttons"
+        >
+          Edit/Delete
+        </button>
       </div>
 
       {mode === 'new' && (
         <form className="editpost-form" onSubmit={handleSubmit}>
+          {error && <p className="form-error">{error}</p>}
           <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleInputChange} required />
           <textarea name="paragraph" placeholder="Paragraph" value={formData.paragraph} onChange={handleInputChange} required />
           <input type="file" name="picture" onChange={handleInputChange} accept="image/*" />
@@ -149,7 +166,7 @@ const EditPosts = () => {
             <option value="hot news">Hot News</option>
           </select>
           <input type="text" name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} autoComplete="off" />
-          <div className='edit-info-buttons'>
+          <div className="edit-info-buttons">
             <button type="submit">Create Post</button>
           </div>
         </form>
@@ -157,7 +174,13 @@ const EditPosts = () => {
 
       {mode === 'edit_delete' && (
         <div className="editpost-posts">
-          <input type="text" placeholder="Filter by title" value={filterTitle} onChange={(e) => setFilterTitle(e.target.value)} className="posts-filter" />
+          <input
+            type="text"
+            placeholder="Filter by title"
+            value={filterTitle}
+            onChange={(e) => setFilterTitle(e.target.value)}
+            className="posts-filter"
+          />
           {filteredPosts.length === 0 ? (
             <p className="no-info-message">No posts with similar title.</p>
           ) : (
@@ -166,16 +189,23 @@ const EditPosts = () => {
                 <div
                   key={post.post_id}
                   className="post-card"
-                  style={{ cursor: "pointer" }}
+                  style={{ cursor: 'pointer' }}
                   onClick={() => navigate(`/post/${post.post_id}`)}
                 >
                   <h3 className="post-title">{post.title}</h3>
                   <img src={`http://localhost:5000/uploads/posts/${post.picture}`} alt="post" className="post-image" />
                   <p className="post-paragraph">{post.paragraph.slice(0, 100)}...</p>
-                  <small className="post-meta">{formatDate(post.uploaded)} <br />Author: {post.author_name} {post.author_surname}</small>
+                  <small className="post-meta">
+                    {formatDate(post.uploaded)} <br />
+                    Author: {post.author_name} {post.author_surname}
+                  </small>
                   <div className="edit-info-buttons" onClick={(e) => e.stopPropagation()}>
-                    <button className="editpost-action-button" onClick={() => handleEditClick(post)}>Edit</button>
-                    <button className="editpost-action-button" onClick={() => handleDelete(post.post_id)}>Delete</button>
+                    <button className="editpost-action-button" onClick={() => handleEditClick(post)}>
+                      Edit
+                    </button>
+                    <button className="editpost-action-button" onClick={() => handleDelete(post.post_id)}>
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))}
@@ -186,6 +216,7 @@ const EditPosts = () => {
 
       {mode === 'edit' && selectedPost && (
         <form className="editpost-form" onSubmit={handleUpdate}>
+          {error && <p className="form-error">{error}</p>}
           <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleInputChange} required />
           <textarea name="paragraph" placeholder="Paragraph" value={formData.paragraph} onChange={handleInputChange} required />
           <input type="file" name="picture" onChange={handleInputChange} accept="image/*" />
@@ -195,7 +226,7 @@ const EditPosts = () => {
             <option value="hot news">Hot News</option>
           </select>
           <input type="text" name="tags" placeholder="Tags (comma separated)" value={formData.tags} onChange={handleInputChange} />
-          <div className='edit-info-buttons'>
+          <div className="edit-info-buttons">
             <button type="submit">Update Post</button>
           </div>
         </form>

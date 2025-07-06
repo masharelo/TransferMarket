@@ -40,6 +40,10 @@ const EditPlayers = () => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
+    if (name === 'value' && value < 0) {
+      alert('Value cannot be negative.');
+      return;
+    }
     if (name === 'picture') {
       setFormData((prev) => ({ ...prev, picture: files[0] }));
     } else {
@@ -47,20 +51,26 @@ const EditPlayers = () => {
     }
   };
 
+  const isFormValid = () => {
+    const { name, surname, date_of_birth, position, nationality, value } = formData;
+    return name && surname && date_of_birth && position && nationality && value !== '';
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!isFormValid()) {
+      alert('Please fill out all required fields.');
+      return;
+    }
     if (!isRegularDate(formData.date_of_birth)) {
       alert('Please enter a valid date.');
       return;
     }
-
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (val) data.append(key, val);
     });
     data.append('folder', 'players');
-
     try {
       await axios.post('http://localhost:5000/api/admin/add_player?folder=players', data, {
         headers: { Authorization: `Bearer ${token}` },
@@ -87,18 +97,19 @@ const EditPlayers = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
+    if (!isFormValid()) {
+      alert('Please fill out all required fields.');
+      return;
+    }
     if (!isRegularDate(formData.date_of_birth)) {
       alert('Please enter a valid date.');
       return;
     }
-
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (key !== 'picture' || val) data.append(key, val);
     });
     data.append('folder', 'players');
-
     try {
       await axios.put(`http://localhost:5000/api/admin/players/${selectedPlayer.player_id}?folder=players`, data, {
         headers: { Authorization: `Bearer ${token}` },
@@ -162,9 +173,9 @@ const EditPlayers = () => {
           <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
           <input type="text" name="surname" placeholder="Surname" value={formData.surname} onChange={handleInputChange} required />
           <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleInputChange} required />
-          <input type="text" name="position" placeholder="Position" value={formData.position} onChange={handleInputChange} />
-          <input type="text" name="nationality" placeholder="Nationality (Country name)" value={formData.nationality} onChange={handleInputChange} />
-          <input type="number" name="value" placeholder="Value (€)" value={formData.value} onChange={handleInputChange} />
+          <input type="text" name="position" placeholder="Position" value={formData.position} onChange={handleInputChange} required />
+          <input type="text" name="nationality" placeholder="Nationality (Country name)" value={formData.nationality} onChange={handleInputChange} required />
+          <input type="number" name="value" placeholder="Value (€)" value={formData.value} onChange={handleInputChange} required />
           <input type="file" name="picture" onChange={handleInputChange} accept="image/*" />
           <div className="edit-info-buttons">
             <button type="submit">Create Player</button>
@@ -215,9 +226,9 @@ const EditPlayers = () => {
           <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
           <input type="text" name="surname" placeholder="Surname" value={formData.surname} onChange={handleInputChange} required />
           <input type="date" name="date_of_birth" value={formData.date_of_birth} onChange={handleInputChange} required />
-          <input type="text" name="position" placeholder="Position" value={formData.position} onChange={handleInputChange} />
-          <input type="text" name="nationality" placeholder="Nationality (Country name)" value={formData.nationality} onChange={handleInputChange} />
-          <input type="number" name="value" placeholder="Value (€)" value={formData.value} onChange={handleInputChange} />
+          <input type="text" name="position" placeholder="Position" value={formData.position} onChange={handleInputChange} required />
+          <input type="text" name="nationality" placeholder="Nationality (Country name)" value={formData.nationality} onChange={handleInputChange} required />
+          <input type="number" name="value" placeholder="Value (€)" value={formData.value} onChange={handleInputChange} required />
           <input type="file" name="picture" onChange={handleInputChange} accept="image/*" />
           <div className="edit-info-buttons">
             <button type="submit">Update Player</button>

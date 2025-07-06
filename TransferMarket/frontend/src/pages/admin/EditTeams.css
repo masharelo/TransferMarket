@@ -109,3 +109,9 @@
   justify-content: center;
   gap: 10px;
 }
+
+.editteam-form input:focus,
+.editteam-form select:focus {
+  border-color: rgb(34, 69, 102);
+  box-shadow: 0 0 5px rgba(34, 69, 102, 0.7);
+}
