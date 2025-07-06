@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './EditTeams.css';
 import formatDate from '../../utils/FormatDate';
+import isRegularDate from '../../utils/IsRegularDate';
 
 const EditTeams = () => {
   const token = localStorage.getItem('token');
@@ -48,6 +49,12 @@ const EditTeams = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isRegularDate(formData.founded)) {
+      alert('Please enter a valid date between 1850 and today.');
+      return;
+    }
+
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (val) data.append(key, val);
@@ -80,6 +87,12 @@ const EditTeams = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+
+    if (!isRegularDate(formData.founded)) {
+      alert('Please enter a valid date between 1850 and today.');
+      return;
+    }
+
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (key !== 'logo' || val) data.append(key, val);

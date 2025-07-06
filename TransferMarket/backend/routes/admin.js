@@ -214,6 +214,21 @@ router.delete('/teams/:teamId', authMiddleware, adminOnly, async (req, res) => {
     const logo = result[0]?.logo;
 
     await sequelize.query(
+      'DELETE FROM favourite_teams WHERE team_id = :teamId',
+      { replacements: { teamId } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM stats WHERE team_id = :teamId',
+      { replacements: { teamId } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM contracts WHERE team_from = :teamId OR team_to = :teamId',
+      { replacements: { teamId } }
+    );
+
+    await sequelize.query(
       'DELETE FROM teams WHERE team_id = :teamId',
       { replacements: { teamId } }
     );
@@ -229,5 +244,116 @@ router.delete('/teams/:teamId', authMiddleware, adminOnly, async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 });
+
+// Add player
+router.post('/add_player', authMiddleware, adminOnly, upload.single('picture'), async (req, res) => {
+  try {
+    const { name, surname, date_of_birth, position, nationality, value } = req.body;
+    const picture = req.file ? req.file.filename : null;
+
+    await sequelize.query(
+      `INSERT INTO players (name, surname, date_of_birth, position, nationality, value, picture)
+       VALUES (:name, :surname, :dob, :position, :nationality, :value, :picture)`,
+      {
+        replacements: {
+          name,
+          surname,
+          dob: date_of_birth,
+          position,
+          nationality,
+          value: Number(value),
+          picture,
+        },
+      }
+    );
+
+    res.status(201).json({ message: 'Player created successfully' });
+  } catch (err) {
+    console.error('Error adding player:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update player
+router.put('/players/:playerId', authMiddleware, adminOnly, upload.single('picture'), async (req, res) => {
+  const { playerId } = req.params;
+  const { name, surname, date_of_birth, position, nationality, value } = req.body;
+  const newPic = req.file ? req.file.filename : null;
+
+  try {
+    const [result] = await sequelize.query(
+      'SELECT picture FROM players WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    const oldPic = result[0]?.picture;
+    const fields = { name, surname, date_of_birth, position, nationality, value };
+    if (newPic) fields.picture = newPic;
+
+    const setClause = Object.keys(fields).map(key => `${key} = :${key}`).join(', ');
+
+    await sequelize.query(
+      `UPDATE players SET ${setClause} WHERE player_id = :playerId`,
+      {
+        replacements: { ...fields, value: Number(value), playerId }
+      }
+    );
+
+    if (newPic && oldPic) {
+      const oldPath = path.join(__dirname, '..', 'uploads', 'players', oldPic);
+      fs.unlink(oldPath, () => {});
+    }
+
+    res.json({ message: 'Player updated successfully' });
+  } catch (err) {
+    console.error('Error updating player:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete player
+router.delete('/players/:playerId', authMiddleware, adminOnly, async (req, res) => {
+  const { playerId } = req.params;
+
+  try {
+    const [result] = await sequelize.query(
+      'SELECT picture FROM players WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    const picture = result[0]?.picture;
+
+    await sequelize.query(
+      'DELETE FROM favourite_players WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM stats WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM contracts WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM players WHERE player_id = :playerId',
+      { replacements: { playerId } }
+    );
+
+    if (picture) {
+      const picPath = path.join(__dirname, '..', 'uploads', 'players', picture);
+      fs.unlink(picPath, () => {});
+    }
+
+    res.json({ message: 'Player deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting player:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 
 module.exports = router;
