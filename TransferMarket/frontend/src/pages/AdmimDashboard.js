@@ -6,11 +6,12 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   const cards = [
-    { name: 'Posts', path: '/admin/edit_posts' },
-    { name: 'Teams', path: '/admin/edit_teams' },
-    { name: 'Players', path: '/admin/edit_players' },
-    { name: 'Transfers', path: '/admin/edit_transfers' },
-    { name: 'Users', path: '/admin/edit_users' },
+    { name: 'Posts 📫', path: '/admin/edit_posts' },
+    { name: 'Teams ⚽', path: '/admin/edit_teams' },
+    { name: 'Players 🐐', path: '/admin/edit_players' },
+    { name: 'Transfers 📈', path: '/admin/edit_transfers' },
+    { name: 'Stats 🔢', path: '/admin/edit_stats'},
+    { name: 'Users 👤', path: '/admin/edit_users' },
   ];
 
   return (

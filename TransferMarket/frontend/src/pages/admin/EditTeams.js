@@ -40,6 +40,10 @@ const EditTeams = () => {
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
+    if (name === 'stadium_capacity' && value < 0) {
+      alert('Value cannot be negative.');
+      return;
+    }
     if (name === 'logo') {
       setFormData((prev) => ({ ...prev, logo: files[0] }));
     } else {
@@ -47,14 +51,21 @@ const EditTeams = () => {
     }
   };
 
+  const isFormValid = () => {
+    const { name, city, country, stadium, stadium_capacity, founded, type } = formData;
+    return name && city && country && stadium && stadium_capacity && founded && type;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    if (!isFormValid()) {
+      alert('Please fill out all required fields.');
+      return;
+    }
     if (!isRegularDate(formData.founded)) {
       alert('Please enter a valid date.');
       return;
     }
-
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (val) data.append(key, val);
@@ -87,12 +98,14 @@ const EditTeams = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-
+    if (!isFormValid()) {
+      alert('Please fill out all required fields.');
+      return;
+    }
     if (!isRegularDate(formData.founded)) {
       alert('Please enter a valid date.');
       return;
     }
-
     const data = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (key !== 'logo' || val) data.append(key, val);
@@ -160,12 +173,12 @@ const EditTeams = () => {
       {mode === 'new' && (
         <form className="editteam-form" onSubmit={handleSubmit}>
           <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
-          <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} />
-          <input type="text" name="country" placeholder="Country" value={formData.country} onChange={handleInputChange} />
-          <input type="text" name="stadium" placeholder="Stadium" value={formData.stadium} onChange={handleInputChange} />
-          <input type="number" name="stadium_capacity" placeholder="Stadium Capacity" value={formData.stadium_capacity} onChange={handleInputChange} />
-          <input type="date" name="founded" value={formData.founded} onChange={handleInputChange} />
-          <select name="type" value={formData.type} onChange={handleInputChange}>
+          <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} required/>
+          <input type="text" name="country" placeholder="Country" value={formData.country} onChange={handleInputChange} required/>
+          <input type="text" name="stadium" placeholder="Stadium" value={formData.stadium} onChange={handleInputChange} required/>
+          <input type="number" name="stadium_capacity" placeholder="Stadium Capacity" value={formData.stadium_capacity} onChange={handleInputChange} required/>
+          <input type="date" name="founded" value={formData.founded} onChange={handleInputChange} required/>
+          <select name="type" value={formData.type} onChange={handleInputChange} required>
             <option value="club">Club</option>
             <option value="national">National</option>
           </select>
@@ -214,12 +227,12 @@ const EditTeams = () => {
       {mode === 'edit' && selectedTeam && (
         <form className="editteam-form" onSubmit={handleUpdate}>
           <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleInputChange} required />
-          <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} />
-          <input type="text" name="country" placeholder="Country" value={formData.country} onChange={handleInputChange} />
-          <input type="text" name="stadium" placeholder="Stadium" value={formData.stadium} onChange={handleInputChange} />
-          <input type="number" name="stadium_capacity" placeholder="Stadium Capacity" value={formData.stadium_capacity} onChange={handleInputChange} />
-          <input type="date" name="founded" value={formData.founded} onChange={handleInputChange} />
-          <select name="type" value={formData.type} onChange={handleInputChange}>
+          <input type="text" name="city" placeholder="City" value={formData.city} onChange={handleInputChange} required/>
+          <input type="text" name="country" placeholder="Country" value={formData.country} onChange={handleInputChange} required/>
+          <input type="text" name="stadium" placeholder="Stadium" value={formData.stadium} onChange={handleInputChange} required/>
+          <input type="number" name="stadium_capacity" placeholder="Stadium Capacity" value={formData.stadium_capacity} onChange={handleInputChange} required/>
+          <input type="date" name="founded" value={formData.founded} onChange={handleInputChange} required/>
+          <select name="type" value={formData.type} onChange={handleInputChange} required>
             <option value="club">Club</option>
             <option value="national">National</option>
           </select>

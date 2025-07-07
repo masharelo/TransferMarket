@@ -695,6 +695,30 @@ router.get('/stats/player/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Get all stats
+router.get('/stats', authMiddleware, async (req, res) => {
+  const query = `
+    SELECT 
+      s.*,
+      p.name AS name,
+      p.surname AS surname
+    FROM stats s
+    JOIN players p ON s.player_id = p.player_id
+    ORDER BY s.season DESC
+  `;
+
+  try {
+    const results = await sequelize.query(query, {
+      type: sequelize.QueryTypes.SELECT
+    });
+
+    res.json(results);
+  } catch (err) {
+    console.error('Error fetching all stats:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Edit user data
 router.put('/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;

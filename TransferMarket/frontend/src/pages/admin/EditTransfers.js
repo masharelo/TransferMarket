@@ -60,6 +60,13 @@ const EditTransfers = () => {
     fetchData()
   }, [token])
 
+  useEffect(() => {
+    if (formData.type === 'contract') {
+      setFormData(prev => ({ ...prev, team_to: prev.team_from }))
+      setTeamToInput(teamFromInput)
+    }
+  }, [formData.type, formData.team_from, teamFromInput])
+
   const playerMap = useMemo(() => {
     const map = {}
     players.forEach(p => {
@@ -82,13 +89,21 @@ const EditTransfers = () => {
       alert('Price cannot be negative.')
       return false
     }
+    if ((formData.type === 'transfer' || formData.type === 'loan') && name === 'team_to' && value === formData.team_from) {
+      alert('Team To cannot be the same as Team From for transfer or loan.')
+      return
+    }
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
   const validateForm = () => {
     const { type, player_id, team_from, team_to, start_date, end_date, price } = formData
     if (!type || !player_id || !team_from || !team_to || !start_date || !end_date || price === '') {
-      alert('All fields must be filled.')
+      alert('All fields must be filled. (Player, Team names must be from recommended)')
+      return false
+    }
+    if ((type === 'transfer' || type === 'loan') && team_from === team_to) {
+      alert('Team From and Team To must be different for transfer or loan.')
       return false
     }
     return validateDates()
@@ -236,6 +251,7 @@ const EditTransfers = () => {
           setTeamFromInput(e.target.value)
           searchTeamsFrom(e.target.value)
         }}
+        style={{color:"red"}}
         required
       />
       {teamFromOptionsFiltered.length > 0 && (
@@ -257,12 +273,16 @@ const EditTransfers = () => {
         placeholder="To Team"
         value={teamToInput}
         onChange={e => {
-          setTeamToInput(e.target.value)
-          searchTeamsTo(e.target.value)
+          if (formData.type !== 'contract') {
+            setTeamToInput(e.target.value)
+            searchTeamsTo(e.target.value)
+          }
         }}
+        disabled={formData.type === 'contract'}
+        style={{color:"green"}}
         required
       />
-      {teamToOptionsFiltered.length > 0 && (
+      {formData.type !== 'contract' && teamToOptionsFiltered.length > 0 && (
         <ul className="edittransfers-dropdown">
           {teamToOptionsFiltered.slice(0, 3).map(t => (
             <li key={t.team_id} onClick={() => {
@@ -323,10 +343,10 @@ const EditTransfers = () => {
                 <div key={t.contract_id || `contract-${index}`} className="edit-card">
                   <h3>{t.type} #{t.contract_id}</h3>
                   <p>Player: {playerMap[t.player_id] || t.player_id}</p>
-                  <p>From: {teamMap[t.team_from] || t.team_from} <br /> To: {teamMap[t.team_to] || t.team_to}</p>
-                  <small>Start: {formatDate(t.start_date)} <br /> End: {t.end_date ? formatDate(t.end_date) : '—'}</small>
-                  <br />
-                  <small>Price: €{formatValue(t.price)}</small>
+                  <p style={{color:"red"}}>From: {teamMap[t.team_from] || t.team_from}</p>
+                  <p style={{color:"green"}}>To: {teamMap[t.team_to] || t.team_to}</p>
+                  <p>Start: {formatDate(t.start_date)} <br /> End: {t.end_date ? formatDate(t.end_date) : '—'}</p>
+                  <p>Price: €{formatValue(t.price)}</p>
                   <div className="edit-info-buttons">
                     <button className="editpost-action-button" onClick={() => handleEditClick(t)}>Edit</button>
                     <button className="editpost-action-button" onClick={() => handleDelete(t.contract_id)}>Delete</button>

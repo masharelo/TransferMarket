@@ -437,5 +437,123 @@ router.delete('/contracts/:contractId', authMiddleware, adminOnly, async (req, r
   }
 });
 
+// Add stat
+router.post('/add_stats', authMiddleware, adminOnly, async (req, res) => {
+  const { player_id, team_id, matches, goals, assists, yellow_cards, red_cards, season } = req.body;
+
+  try {
+    await sequelize.query(`
+      INSERT INTO stats (player_id, team_id, matches, goals, assists, yellow_cards, red_cards, season)
+      VALUES (:player_id, :team_id, :matches, :goals, :assists, :yellow_cards, :red_cards, :season)
+    `, {
+      replacements: {
+        player_id,
+        team_id,
+        matches,
+        goals,
+        assists,
+        yellow_cards,
+        red_cards,
+        season,
+      }
+    });
+
+    res.status(201).json({ message: 'Stat added successfully' });
+  } catch (err) {
+    console.error('Error adding stat:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Update stat
+router.put('/stats/:statId', authMiddleware, adminOnly, async (req, res) => {
+  const { statId } = req.params;
+  const { player_id, team_id, matches, goals, assists, yellow_cards, red_cards, season } = req.body;
+
+  try {
+    await sequelize.query(`
+      UPDATE stats
+      SET player_id = :player_id,
+          team_id = :team_id,
+          matches = :matches,
+          goals = :goals,
+          assists = :assists,
+          yellow_cards = :yellow_cards,
+          red_cards = :red_cards,
+          season = :season
+      WHERE stat_id = :statId
+    `, {
+      replacements: {
+        statId,
+        player_id,
+        team_id,
+        matches,
+        goals,
+        assists,
+        yellow_cards,
+        red_cards,
+        season,
+      }
+    });
+
+    res.json({ message: 'Stat updated successfully' });
+  } catch (err) {
+    console.error('Error updating stat:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Delete stat
+router.delete('/stats/:statId', authMiddleware, adminOnly, async (req, res) => {
+  const { statId } = req.params;
+
+  try {
+    await sequelize.query('DELETE FROM stats WHERE stat_id = :statId', {
+      replacements: { statId },
+    });
+
+    res.json({ message: 'Stat deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting stat:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Make user admin
+router.patch('/users/:id/make-admin', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await sequelize.query(
+      'UPDATE users SET is_admin = 1 WHERE user_id = :id RETURNING *',
+      {
+        replacements: { id },
+      }
+    );
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ message: 'User upgraded to admin', user: result[0] });
+  } catch (err) {
+    console.error('Failed to upgrade user:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete user
+router.delete('/users/:id', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [result] = await sequelize.query('DELETE FROM users WHERE user_id = :id RETURNING *', {
+      replacements: { id },
+    });
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.json({ message: 'User deleted' });
+  } catch (err) {
+    console.error('Failed to delete user:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 module.exports = router;

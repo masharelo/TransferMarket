@@ -22,6 +22,7 @@ import EditTeams from './pages/admin/EditTeams';
 import EditPlayers from './pages/admin/EditPlayers';
 import EditTransfers from './pages/admin/EditTransfers';
 import EditUsers from './pages/admin/EditUsers';
+import EditStats from './pages/admin/EditStats';
 import AdminRoute from './routes/AdminRoute';
 import PrivateRoute from './routes/PrivateRoute';
 import PublicRoute from './routes/PublicRoute';
@@ -46,11 +47,12 @@ function App() {
       <Route path="/players/:playerId" element={<PrivateRoute> <Layout> <PlayerDetail /> </Layout> </PrivateRoute>} />
       <Route path="/admin" element={<AdminRoute> <Layout> <AdminDashboard /> </Layout> </AdminRoute>} />
       <Route path="/not-authorized" element={<NotAuthorized/>} />
-      <Route path="/admin/edit_posts" element={<AdminRoute><Layout><EditPosts /></Layout></AdminRoute>} />
-      <Route path="/admin/edit_teams" element={<AdminRoute><Layout><EditTeams /></Layout></AdminRoute>} />
-      <Route path="/admin/edit_players" element={<AdminRoute><Layout><EditPlayers /></Layout></AdminRoute>} />
-      <Route path="/admin/edit_transfers" element={<AdminRoute><Layout><EditTransfers /></Layout></AdminRoute>} />
-      <Route path="/admin/edit_users" element={<AdminRoute><Layout><EditUsers /></Layout></AdminRoute>} />
+      <Route path="/admin/edit_posts" element={<AdminRoute> <Layout> <EditPosts /> </Layout> </AdminRoute>} />
+      <Route path="/admin/edit_teams" element={<AdminRoute> <Layout> <EditTeams /></Layout> </AdminRoute>} />
+      <Route path="/admin/edit_players" element={<AdminRoute> <Layout> <EditPlayers /> </Layout> </AdminRoute>} />
+      <Route path="/admin/edit_transfers" element={<AdminRoute> <Layout> <EditTransfers /> </Layout> </AdminRoute>} />
+      <Route path="/admin/edit_users" element={<AdminRoute> <Layout> <EditUsers /> </Layout> </AdminRoute>} />
+      <Route path="/admin/edit_stats" element={<AdminRoute> <Layout> <EditStats /> </Layout> </AdminRoute>} />
     </Routes>
   );
 }
