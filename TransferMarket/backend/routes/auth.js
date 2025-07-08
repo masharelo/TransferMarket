@@ -4,9 +4,23 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { sequelize } = require('../config/db');
+const multer = require("multer");
+const path = require("path");
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/users');
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const upload = multer({ storage });
+
 
 // Register
 router.post('/register', async (req, res) => {
@@ -720,9 +734,10 @@ router.get('/stats', authMiddleware, async (req, res) => {
 });
 
 // Edit user data
-router.put('/users/:id', authMiddleware, async (req, res) => {
+router.put('/users/:id', authMiddleware, upload.single('pfp'), async (req, res) => {
   const { id } = req.params;
   const { username, email, name, surname } = req.body;
+  let profilePic = req.file ? req.file.filename : null;
 
   try {
     const [users] = await sequelize.query(`SELECT * FROM users WHERE user_id = :id`, {
@@ -742,8 +757,8 @@ router.put('/users/:id', authMiddleware, async (req, res) => {
     }
 
     await sequelize.query(
-      `UPDATE users SET username = :username, email = :email, name = :name, surname = :surname WHERE user_id = :id`,
-      { replacements: { username, email, name, surname, id } }
+      `UPDATE users SET username = :username, email = :email, name = :name, surname = :surname, pfp = :pfp WHERE user_id = :id`,
+      { replacements: { username, email, name, surname, pfp: profilePic, id } }
     );
 
     const [updatedUsers] = await sequelize.query(`SELECT * FROM users WHERE user_id = :id`, {

@@ -35,8 +35,18 @@ const EditUsers = () => {
           {},
           { headers: { Authorization: `Bearer ${token}` } }
         );
+
+        const updatedUser = res.data.user;
+
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.user_id === updatedUser.user_id
+              ? { ...user, is_admin: 1 }
+              : user
+          )
+        );
+
         alert('User upgraded to admin!');
-        setUsers(res.data);
       } catch (err) {
         console.error('Error upgrading user:', err);
         alert('Failed to upgrade user');
@@ -50,7 +60,7 @@ const EditUsers = () => {
         await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        
+
         setUsers(users.filter((user) => user.user_id !== userId));
         alert('User deleted!');
       } catch (err) {
@@ -60,9 +70,9 @@ const EditUsers = () => {
     }
   };
 
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(filter)
-  );
+  const filteredUsers = Array.isArray(users)
+    ? users.filter((user) => user.username.toLowerCase().includes(filter))
+    : [];
 
   return (
     <div className="editusers-container">
@@ -78,11 +88,14 @@ const EditUsers = () => {
       <div className="editusers-form">
         <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Manage Users 👤</h2>
         {loading ? (
-          <p className='empty-favourites'>Loading users...</p>
+          <p className="empty-favourites">Loading users...</p>
         ) : (
           <div className="editusers-grid">
             {filteredUsers.map((user) => (
-              <div key={user.user_id} className="editusers-card">
+              <div
+                key={user.user_id}
+                className={`editusers-card ${user.is_admin === 1 ? 'locked' : ''}`}
+              >
                 <div className="editusers-name">
                   <img
                     src={`http://localhost:5000/uploads/users/${user.pfp || 'basic.jpeg'}`}
@@ -94,14 +107,16 @@ const EditUsers = () => {
                 <div className="editusers-details">{user.email}</div>
                 <div className="edit-info-buttons">
                   <button
-                    className="editusers-confirm-button"
+                    className={`editusers-confirm-button ${user.is_admin === 1 ? 'disabled' : ''}`}
                     onClick={() => handleAddAdmin(user.user_id)}
+                    disabled={user.is_admin === 1}
                   >
                     <span style={{ color: 'aqua' }}>Add Admin</span>
                   </button>
                   <button
-                    className="editusers-confirm-button"
+                    className={`editusers-confirm-button ${user.is_admin === 1 ? 'disabled' : ''}`}
                     onClick={() => handleDeleteUser(user.user_id)}
+                    disabled={user.is_admin === 1}
                   >
                     <span style={{ color: 'red' }}>Delete</span>
                   </button>

@@ -541,15 +541,45 @@ router.patch('/users/:id/make-admin', authMiddleware, adminOnly, async (req, res
 
 // Delete user
 router.delete('/users/:id', authMiddleware, adminOnly, async (req, res) => {
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
-    const [result] = await sequelize.query('DELETE FROM users WHERE user_id = :id RETURNING *', {
-      replacements: { id },
-    });
+    const [userResult] = await sequelize.query(
+      'SELECT pfp FROM users WHERE user_id = :id',
+      { replacements: { id } }
+    );
+
+    const profilePicture = userResult[0]?.pfp;
+
+    await sequelize.query(
+      'DELETE FROM favourite_players WHERE user_id = :id',
+      { replacements: { id } }
+    );
+
+    await sequelize.query(
+      'DELETE FROM favourite_teams WHERE user_id = :id',
+      { replacements: { id } }
+    );
+
+    const [result] = await sequelize.query(
+      'DELETE FROM users WHERE user_id = :id RETURNING *',
+      { replacements: { id } }
+    );
+
     if (result.length === 0) {
       return res.status(404).json({ error: 'User not found' });
     }
-    res.json({ message: 'User deleted' });
+
+    if (profilePicture) {
+      const picPath = path.join(__dirname, '..', 'uploads', 'users', profilePicture);
+      fs.unlink(picPath, (err) => {
+        if (err) {
+          console.error('Failed to delete profile picture:', err);
+        }
+      });
+    }
+
+    res.json({ message: 'User deleted successfully' });
   } catch (err) {
     console.error('Failed to delete user:', err);
     res.status(500).json({ error: 'Internal server error' });

@@ -9,6 +9,9 @@ const MyProfile = () => {
   const [editing, setEditing] = useState(false);
   const [formData, setFormData] = useState({});
   const [error, setError] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [pictureChanged, setPictureChanged] = useState(false);
+  const [removePfpButtonText, setRemovePfpButtonText] = useState("Remove PFP");
 
   useEffect(() => {
     if (user) {
@@ -33,19 +36,49 @@ const MyProfile = () => {
   const handleEditToggle = () => {
     setEditing(!editing);
     setError("");
+    if (!editing) {
+      setPictureChanged(false);
+      setRemovePfpButtonText("Remove PFP");
+    }
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfilePicture(file);
+      setPictureChanged(true);
+    }
+  };
+
+  const handleRemovePfp = () => {
+    setProfilePicture(null);
+    setPictureChanged(true);
+    setRemovePfpButtonText("Removed");
+  };
+
   const handleSave = async () => {
     setError("");
+    const formDataWithFile = new FormData();
+
+    Object.keys(formData).forEach((key) => {
+      formDataWithFile.append(key, formData[key]);
+    });
+
+    if (profilePicture) {
+      formDataWithFile.append("pfp", profilePicture);
+    } else if (pictureChanged) {
+      formDataWithFile.append("pfp", null);
+    }
+
     try {
       const res = await fetch(`http://localhost:5000/api/auth/users/${user.user_id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        body: formDataWithFile,
       });
 
       if (res.status === 409) {
@@ -60,25 +93,55 @@ const MyProfile = () => {
       updateUser(updatedUser);
       setProfileData(updatedUser);
       setEditing(false);
+      setPictureChanged(false);
+      setRemovePfpButtonText("Remove PFP");
     } catch (err) {
       console.error(err);
       setError("An error occurred while updating your profile.");
     }
   };
 
+  const isRemovePfpButtonDisabled = !profileData.pfp;
+
   return (
     <div className="profile-container">
       <h1 className="profile-title">🗝️ My Profile</h1>
       <div className="profile-card">
-        {profileData.pfp && (
-          <div className="pfp-container">
+        <div className="pfp-container">
+          {editing ? (
             <img
-              src={`http://localhost:5000/uploads/users/${profileData.pfp}`}
+              src={`http://localhost:5000/uploads/users/${profileData.pfp || 'basic.jpeg'}`}
+              alt="PFP"
+              className="profile-pic"
+              onClick={() => document.getElementById('file-input').click()}
+              style={{ cursor: 'pointer' }}
+            />
+          ) : (
+            <img
+              src={`http://localhost:5000/uploads/users/${profileData.pfp || 'basic.jpeg'}`}
               alt="PFP"
               className="profile-pic"
             />
-          </div>
-        )}
+          )}
+          {editing && (
+            <>
+              <input
+                id="file-input"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleFileChange}
+              /> <br/>
+              <button
+                className="remove-pfp-button"
+                onClick={handleRemovePfp}
+                disabled={isRemovePfpButtonDisabled}
+              >
+                {removePfpButtonText}
+              </button>
+            </>
+          )}
+        </div>
         <div className="profile-details">
           <p><strong>Username: </strong>
             {editing ? (
@@ -87,6 +150,7 @@ const MyProfile = () => {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
+                required
               />
             ) : profileData.username}
           </p>
@@ -97,6 +161,7 @@ const MyProfile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                required
               />
             ) : profileData.name}
           </p>
@@ -107,6 +172,7 @@ const MyProfile = () => {
                 name="surname"
                 value={formData.surname}
                 onChange={handleChange}
+                required
               />
             ) : profileData.surname}
           </p>
@@ -117,6 +183,7 @@ const MyProfile = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             ) : profileData.email}
           </p>
@@ -126,7 +193,7 @@ const MyProfile = () => {
         <div className="edit-info-buttons">
           {editing ? (
             <>
-              <button onClick={handleSave}>Save</button>
+              <button onClick={handleSave} disabled={!formData.username || !formData.name || !formData.surname || !formData.email} className="save-userinfo-button">Save</button>
               <button onClick={handleEditToggle}>Cancel</button>
             </>
           ) : (

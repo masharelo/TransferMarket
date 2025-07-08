@@ -131,3 +131,36 @@
     justify-content: center;
   }
 }
+
+.remove-pfp-button {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  margin-top: 10px;
+  padding: 5px 10px;
+  background-color: red;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 14px;
+}
+
+.remove-pfp-button:disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.remove-pfp-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.save-userinfo-button:disabled{
+  background-color: grey;
+  cursor: not-allowed;
+}
+
+.save-userinfo-button:disabled:hover{
+  background-color: red;
+}

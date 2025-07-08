@@ -18,12 +18,13 @@
 .editusers-form {
   display: flex;
   flex-direction: column;
-  width: 70%;
+  width: 75%;
   padding: 30px;
   background-color: #171033;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
   margin: 0 auto;
+  min-width: 650px;
 }
 
 .editusers-filter {
@@ -92,4 +93,25 @@
   margin-left: 10%;
   margin-right: 11%;
   margin-top: 10px;
+}
+
+.edit-info-buttons .editusers-confirm-button {
+  padding: 8px 16px;
+  margin: 5px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-info-buttons .editusers-confirm-button.disabled {
+  background-color: #555;
+  cursor: not-allowed;
+  color: #888;
+  box-shadow: none;
+}
+
+.edit-info-buttons .editusers-confirm-button.disabled:hover {
+  background-color: #555;
+  transform: none;
 }
