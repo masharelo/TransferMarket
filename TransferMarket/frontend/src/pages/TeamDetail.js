@@ -136,7 +136,7 @@ const TeamDetail = () => {
             {team.city && <p><strong>City:</strong> {team.city}</p>}
             <p><strong>Stadium:</strong> {team.stadium}</p>
             <p><strong>Capacity:</strong> {team.stadium_capacity}</p>
-            <p><strong>Founded:</strong> {formatDate(team.founded)}, {getAge(team.founded)} years</p>
+            <p><strong>Founded:</strong> {formatDate(team.founded)}- {getAge(team.founded)} years</p>
             <p><strong>Squad Value:</strong> €{formatTotalValue(squadValue)}</p>
           </div>
 

@@ -7,5 +7,5 @@ export default function formatDate(dateString) {
   const month = date.toLocaleString('default', { month: 'short' });
   const year = date.getFullYear();
 
-  return `${day} / ${month} / ${year}`;
+  return `${day}. ${month} ${year}. `;
 }

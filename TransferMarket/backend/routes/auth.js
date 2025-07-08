@@ -573,6 +573,33 @@ router.get('/transfers', authMiddleware, async (req, res) => {
   }
 });
 
+// Get all transfers for a specific player
+router.get('/transfers/player/:playerId', authMiddleware, async (req, res) => {
+  const { playerId } = req.params;
+
+  try {
+    const [transfers] = await sequelize.query(`
+      SELECT c.contract_id, c.type, c.player_id, c.team_from, c.team_to, c.start_date, c.end_date, c.price,
+             p.name AS player_name, p.surname AS player_surname, p.picture AS player_picture, 
+             t1.name AS team_from_name, t1.logo AS team_from_logo,
+             t2.name AS team_to_name, t2.logo AS team_to_logo
+      FROM contracts c
+      JOIN players p ON c.player_id = p.player_id
+      JOIN teams t1 ON c.team_from = t1.team_id
+      JOIN teams t2 ON c.team_to = t2.team_id
+      WHERE c.player_id = :playerId
+      ORDER BY c.start_date DESC
+    `, {
+      replacements: { playerId }
+    });
+
+    res.json(transfers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch player transfers' });
+  }
+});
+
 // Get all team squads
 router.get('/teams-with-squad', authMiddleware, async (req, res) => {
   try {
@@ -780,5 +807,6 @@ router.put('/users/:id', authMiddleware, upload.single('pfp'), async (req, res) 
     return res.status(500).json({ error: "Something went wrong" });
   }
 });
+
 
 module.exports = router;

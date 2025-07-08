@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './PlayerDetail.css';
-import countryNameToCode from "../utils/CountryToCode";
-import formatDate from "../utils/FormatDate";
-import getAge from "../utils/GetAge";
+import countryNameToCode from '../utils/CountryToCode';
+import formatDate from '../utils/FormatDate';
+import getAge from '../utils/GetAge';
 import formatValue from '../utils/FormatValue';
 
 const PlayerDetail = () => {
@@ -13,6 +13,7 @@ const PlayerDetail = () => {
   const [player, setPlayer] = useState(null);
   const [stats, setStats] = useState([]);
   const [selectedView, setSelectedView] = useState('total');
+  const [transferHistory, setTransferHistory] = useState([]);
 
   useEffect(() => {
     const fetchPlayer = async () => {
@@ -37,8 +38,20 @@ const PlayerDetail = () => {
       }
     };
 
+    const fetchTransfers = async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/auth/transfers/player/${playerId}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        setTransferHistory(res.data);
+      } catch (err) {
+        console.error('Error fetching player transfers', err);
+      }
+    };
+
     fetchPlayer();
     fetchStats();
+    fetchTransfers();
   }, [playerId]);
 
   const toggleFavourite = async () => {
@@ -165,8 +178,7 @@ const PlayerDetail = () => {
         return <p className="no-stats-message">No recorded stats for clubs.</p>;
       }
       return Object.entries(grouped).map(([clubName, clubStats]) => {
-        const sanitizedClubName = clubName.replace(/\s+/g, '');
-        const clubLogo = `http://localhost:5000/uploads/teams/${sanitizedClubName}.png`;
+        const clubLogo = `http://localhost:5000/uploads/teams/${clubStats[0].team_logo}`;
         const teamId = clubStats[0].team_id;
 
         return (
@@ -193,7 +205,7 @@ const PlayerDetail = () => {
           <div className="club-header" onClick={() => navigate(`/teams/${teamId}`)} style={{ cursor: 'pointer' }}>
             <img
               className="club-logo"
-              src={`https://flagcdn.com/w40/${countryNameToCode[player.nationality]}.png`}
+              src={`http://localhost:5000/uploads/teams/${nationalStats[0].team_logo}`}
               alt={player.nationality}
               title={player.nationality}
             />
@@ -201,6 +213,57 @@ const PlayerDetail = () => {
           </div>
           {renderStatsTable(nationalStats)}
         </>
+      );
+    }
+
+    if (selectedView === 'transfers') {
+      if (transferHistory.length === 0) {
+        return <p className="no-stats-message">No transfer history available.</p>;
+      }
+
+      return (
+        <table className="transfers-table">
+          <thead>
+            <tr>
+              <th>📆 Start</th>
+              <th>📆 End</th>
+              <th>🔁 Type</th>
+              <th>From</th>
+              <th>To</th>
+              <th>💰 Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {transferHistory.map((t, index) => (
+              <tr key={index}>
+                <td>{formatDate(t.start_date)}</td>
+                <td>{t.end_date ? formatDate(t.end_date) : 'Ongoing'}</td>
+                <td>{t.type}</td>
+                <td>
+                  <div className='logo-name-cell-from' onClick={() => navigate(`/teams/${t.team_from}`)} style={{ cursor: 'pointer' }}>
+                    <img
+                      src={`http://localhost:5000/uploads/teams/${t.team_from_logo}`}
+                      alt={t.team_from_name}
+                      className="club-logo"
+                    />
+                    <strong className="team-name">{t.team_from_name}</strong>
+                  </div>
+                </td>
+                <td>
+                  <div className='logo-name-cell-to' onClick={() => navigate(`/teams/${t.team_to}`)} style={{ cursor: 'pointer' }}>
+                    <strong className="team-name">{t.team_to_name}</strong>
+                    <img
+                      src={`http://localhost:5000/uploads/teams/${t.team_to_logo}`}
+                      alt={t.team_to_name}
+                      className="club-logo"
+                    />
+                  </div>
+                </td>
+                <td>{t.price ? `€${formatValue(t.price)}` : 'Free'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       );
     }
 
@@ -249,6 +312,7 @@ const PlayerDetail = () => {
           <button className={selectedView === 'total' ? 'active' : ''} onClick={() => setSelectedView('total')}>Total Stats</button>
           <button className={selectedView === 'club' ? 'active' : ''} onClick={() => setSelectedView('club')}>Club Stats</button>
           <button className={selectedView === 'country' ? 'active' : ''} onClick={() => setSelectedView('country')}>Country Stats</button>
+          <button className={selectedView === 'transfers' ? 'active' : ''} onClick={() => setSelectedView('transfers')}>Transfer History</button>
         </div>
         <div className="player-stats-section">
           {renderStatsView()}
