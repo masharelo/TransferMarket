@@ -70,8 +70,9 @@ const MyProfile = () => {
 
     if (profilePicture) {
       formDataWithFile.append("pfp", profilePicture);
+      formDataWithFile.append("removePfp", "false");
     } else if (pictureChanged) {
-      formDataWithFile.append("pfp", null);
+      formDataWithFile.append("removePfp", "true");
     }
 
     try {
@@ -100,6 +101,7 @@ const MyProfile = () => {
       setError("An error occurred while updating your profile.");
     }
   };
+
 
   const isRemovePfpButtonDisabled = !profileData.pfp;
 

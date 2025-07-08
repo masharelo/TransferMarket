@@ -4,8 +4,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middlewares/authMiddleware');
 const { sequelize } = require('../config/db');
-const multer = require("multer");
-const path = require("path");
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev_secret';
@@ -72,7 +73,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign(
       { user_id: user.user_id, is_admin: user.is_admin, username: user.username },
       JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '2h' }
     );
 
     res.json({ token, user });
@@ -736,7 +737,7 @@ router.get('/stats', authMiddleware, async (req, res) => {
 // Edit user data
 router.put('/users/:id', authMiddleware, upload.single('pfp'), async (req, res) => {
   const { id } = req.params;
-  const { username, email, name, surname } = req.body;
+  const { username, email, name, surname, removePfp } = req.body;
   let profilePic = req.file ? req.file.filename : null;
 
   try {
@@ -756,6 +757,14 @@ router.put('/users/:id', authMiddleware, upload.single('pfp'), async (req, res) 
       return res.status(409).json({ error: "Username or email already exists" });
     }
 
+    if (removePfp === 'true' && user.pfp) {
+      const oldPath = path.join(__dirname, '..', 'uploads', 'users', user.pfp);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+      profilePic = null;
+    }
+
     await sequelize.query(
       `UPDATE users SET username = :username, email = :email, name = :name, surname = :surname, pfp = :pfp WHERE user_id = :id`,
       { replacements: { username, email, name, surname, pfp: profilePic, id } }
@@ -771,6 +780,5 @@ router.put('/users/:id', authMiddleware, upload.single('pfp'), async (req, res) 
     return res.status(500).json({ error: "Something went wrong" });
   }
 });
-
 
 module.exports = router;

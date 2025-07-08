@@ -162,14 +162,14 @@ const EditTransfers = () => {
   const handleEditClick = t => {
     setSelected(t)
     setFormData({
-      type: t.type,
-      player_id: t.player_id,
-      team_from: t.team_from,
-      team_to: t.team_to,
-      start_date: t.start_date.split('T')[0],
-      end_date: t.end_date ? t.end_date.split('T')[0] : '',
-      price: t.price
-    })
+    type: t.type,
+    player_id: t.player_id,
+    team_from: t.team_from,
+    team_to: t.team_to,
+    start_date: t.start_date.split('T')[0],
+    end_date: t.end_date ? t.end_date.split('T')[0] : '',
+    price: t.price.toString()
+  })
     setPlayerInput(playerMap[t.player_id] || '')
     setTeamFromInput(teamMap[t.team_from] || '')
     setTeamToInput(teamMap[t.team_to] || '')
